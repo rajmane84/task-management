@@ -1,9 +1,10 @@
-import Image from "next/image";
-
-export default function Home() {
+export default function LandingPage() {
+  console.log("Rendering Landing Page");
   return (
-    <div className="min-h-screen h-screen bg-black text-white flex items-center justify-center">
-      <h1 className="text-2xl font-bold text-white tracking-tight">Hi there!</h1>
+    <div className="flex h-screen min-h-screen items-center justify-center bg-black text-white">
+      <h1 className="text-2xl font-bold tracking-tight text-white">
+        This will be our landing page
+      </h1>
     </div>
   );
 }
