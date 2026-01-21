@@ -3,6 +3,7 @@ import { loginSchema, signupSchema } from "../zod-schemas/auth.schema";
 import { formatZodError } from "../utils/format-error";
 import { User } from "../models/user.model";
 import bcrypt from "bcrypt";
+import jwt, { type JwtPayload } from "jsonwebtoken";
 import { COOKIE_OPTIONS } from "../constants";
 
 export const handleUserLogin = async (req: Request, res: Response) => {
@@ -124,5 +125,45 @@ export const handleUserSignup = async (req: Request, res: Response) => {
       success: false,
       message: error.message || "Internal server error",
     });
+  }
+};
+
+export const refreshAccessToken = async (req: Request, res: Response) => {
+  try {
+    const refreshToken = req.cookies.refreshToken;
+
+    if (!refreshToken) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Refresh token missing" });
+    }
+
+    const decoded = jwt.verify(
+      refreshToken,
+      process.env.REFRESH_TOKEN_SECRET!,
+    ) as JwtPayload;
+
+    const user = await User.findById(decoded._id);
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    const accessToken = user.generateAccessToken();
+
+    return res.status(200).cookie("accessToken", accessToken).json({
+      success: true,
+      message: "Access token refreshed successfully",
+    });
+  } catch (error) {
+    console.error("Refresh Token Error:", error);
+
+    // Clear cookies if the token is invalid or expired
+    res.clearCookie("refreshToken");
+    return res
+      .status(403)
+      .json({ success: false, message: "Invalid or expired refresh token" });
   }
 };
