@@ -29,5 +29,5 @@ jobs:
       # Verify everything is actually clean now
       - name: Final Check
         run: |
-          pnpm run lint
-          pnpm run prettier:check
+          bun run lint
+          bun run prettier:check
