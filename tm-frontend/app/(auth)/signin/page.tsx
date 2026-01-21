@@ -7,6 +7,9 @@ import { Eye, EyeClosed, Loader2 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { loginSchema, type LoginInput } from "@/lib/schema/login.schema";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import axiosInstance from "@/lib/axios-instance";
 
 export default function LoginPage() {
   const [isPending, startTransition] = useTransition();
@@ -20,14 +23,27 @@ export default function LoginPage() {
     resolver: zodResolver(loginSchema),
   });
 
+  const router = useRouter();
+
   const onSubmit = (data: LoginInput) => {
     startTransition(async () => {
-      console.log("Form Data:", data);
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      try {
+        const response = await axiosInstance.post("/auth/login", data);
+
+        if (response.status === 200) {
+          const { user } = response.data;
+
+          toast.success(`Welcome back, ${user.username}!`);
+          router.push("/app");
+        }
+      } catch (error: any) {
+        const message = error.message || "Invalid email or password";
+        toast.error(message);
+        console.error("Login failed:", error);
+      }
     });
   };
 
-  // Base styles for inputs to keep the JSX clean
   const inputBaseStyles =
     "w-full p-2 border outline-none text-neutral-800 focus:ring-2 focus:ring-blue-500 bg-neutral-100/50 transition-all duration-300 placeholder:text-gray-500";
 
@@ -79,12 +95,11 @@ export default function LoginPage() {
               />
               <button
                 type="button"
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500 hover:text-gray-700"
                 onClick={() => setIsPasswordVisible(!isPasswordVisible)}
               >
-                {isPasswordVisible ? <EyeClosed /> : <Eye/>}
+                {isPasswordVisible ? <EyeClosed /> : <Eye />}
               </button>
-              
             </div>
             {errors.password && (
               <p className="mt-1 text-left text-xs font-medium text-red-500">
@@ -97,7 +112,7 @@ export default function LoginPage() {
             type="submit"
             disabled={isPending}
             className={cn(
-              "flex w-full items-center justify-center rounded-sm bg-green-500 py-2 font-bold text-white transition-colors hover:bg-green-600 cursor-pointer",
+              "flex w-full cursor-pointer items-center justify-center rounded-sm bg-green-500 py-2 font-bold text-white transition-colors hover:bg-green-600",
               isPending && "cursor-not-allowed opacity-70",
             )}
           >
@@ -119,7 +134,7 @@ export default function LoginPage() {
         </div>
 
         <div className="space-y-3">
-          <button className=" cursor-pointer flex w-full items-center justify-center gap-2 rounded-sm border border-gray-300 p-2 font-semibold text-[#42526e] transition-colors hover:bg-gray-50">
+          <button className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-sm border border-gray-300 p-2 font-semibold text-[#42526e] transition-colors hover:bg-gray-50">
             <img
               src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
               alt="Google"
@@ -127,7 +142,7 @@ export default function LoginPage() {
             />
             Continue with Google
           </button>
-          <button className="cursor-pointer flex w-full items-center justify-center gap-2 rounded-sm border border-gray-300 p-2 font-semibold text-[#42526e] transition-colors hover:bg-gray-50">
+          <button className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-sm border border-gray-300 p-2 font-semibold text-[#42526e] transition-colors hover:bg-gray-50">
             <AtlassianLogo />
             Continue with Atlassian
           </button>

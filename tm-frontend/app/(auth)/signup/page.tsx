@@ -8,10 +8,14 @@ import { cn } from "@/lib/cn";
 import { signupSchema, type SignupInput } from "@/lib/schema/signup.schema";
 import Link from "next/link";
 import { TaskFlowLogo, AtlassianLogo } from "../signin/page";
+import { toast } from "sonner";
+import axiosInstance from "@/lib/axios-instance";
+import { useRouter } from "next/navigation";
 
 export default function SignupPage() {
   const [isPending, startTransition] = useTransition();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const router = useRouter();
 
   const {
     register,
@@ -22,12 +26,21 @@ export default function SignupPage() {
   });
 
   const onSubmit = (data: SignupInput) => {
-    startTransition(async () => {
-      console.log("Signup Data:", data);
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-    });
-  };
+  startTransition(async () => {
+    try {
+      const response = await axiosInstance.post("/auth/register", data);
+
+      if (response.status === 201 || response.status === 200) {
+        toast.success("Account created successfully!");
+      }
+
+      router.push("/app");
+    } catch (error: any) {
+      const message = error.message || "Failed to create account. Please try again.";
+      toast.error(message);
+    }
+  });
+};
 
   const inputBaseStyles =
     "w-full p-2 border outline-none text-neutral-800 focus:ring-2 focus:ring-blue-500 bg-neutral-100/50 transition-all duration-300 placeholder:text-gray-500 rounded-sm";
