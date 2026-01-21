@@ -9,7 +9,8 @@ export function formatZodError(error: ZodError) {
     if (formatted[field]) continue;
 
     if (issue.code === "invalid_type") {
-      formatted[field] = `${field} is required and must be of type ${issue.expected}`;
+      formatted[field] =
+        `${field} is required and must be of type ${issue.expected}`;
     } else {
       formatted[field] = issue.message;
     }

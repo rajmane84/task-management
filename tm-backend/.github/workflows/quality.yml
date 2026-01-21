@@ -1,0 +1,33 @@
+name: Code Quality & Fix
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  fix-and-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          # Use the branch name (ref) so we are not in a "detached HEAD" state
+          ref: ${{ github.head_ref || github.ref_name }} 
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      # Verify everything is actually clean now
+      - name: Final Check
+        run: |
+          pnpm run lint
+          pnpm run prettier:check
