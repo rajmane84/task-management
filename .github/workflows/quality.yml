@@ -24,12 +24,16 @@ jobs:
         uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
+          cache: true
+          cache-dependency-path: ./tm-backend/bun.lock
 
       - name: Install dependencies
+        working-directory: ./tm-backend
         run: bun install --frozen-lockfile
 
       # Verify everything is actually clean now
       - name: Final Check
+        working-directory: ./tm-backend
         run: |
           bun run lint
           bun run prettier:check
