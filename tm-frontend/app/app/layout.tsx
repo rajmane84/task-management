@@ -43,7 +43,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
           {/* Profile & Controls */}
           <div className="mb-2 flex items-center justify-between p-4">
             <button className="flex items-center gap-2 truncate rounded-md p-1 transition-colors hover:bg-white/5">
-              <div className="h-6 min-w-6 rounded-full border border-white/10 bg-linear-to-tr from-orange-500 to-red-600" />
+              <div className="h-6 min-w-6 rounded-full border border-white/10 bg-linear-to-tr from-blue-500 to-blue-700" />
               <span className="truncate text-sm font-semibold">Raj</span>
               <ChevronDown size={14} className="shrink-0 opacity-50" />
             </button>
@@ -63,9 +63,9 @@ const AppLayout = ({ children }: AppLayoutProps) => {
           {/* Scrollable Navigation Area */}
           <nav className="custom-scrollbar flex-1 space-y-0.5 overflow-y-auto px-3">
             <NavItem
-              icon={<Plus size={20} className="text-[#db4c3f]" />}
+              icon={<Plus size={20} className="text-blue-500 hover:text-blue-400" />}
               label="Add task"
-              className="font-bold text-[#db4c3f] hover:text-[#db4c3f]"
+              className="font-bold text-blue-500 hover:text-blue-400"
             />
             <NavItem icon={<Search size={20} />} label="Search" />
             <NavItem
@@ -110,7 +110,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
               <p className="mb-4 text-[12px] leading-relaxed text-gray-400">
                 Our support guides are just a click away.
               </p>
-              <button className="w-full rounded-lg bg-[#e44332] py-2.5 text-xs font-bold text-white transition-all hover:bg-[#c3392b] active:scale-[0.98]">
+              <button className="w-full rounded-lg bg-blue-500 py-2.5 text-xs font-bold text-white transition-all hover:bg-[#c3392b] active:scale-[0.98]">
                 Thanks!
               </button>
             </div>

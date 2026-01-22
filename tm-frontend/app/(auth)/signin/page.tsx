@@ -26,6 +26,7 @@ export default function LoginPage() {
   const router = useRouter();
 
   const onSubmit = (data: LoginInput) => {
+    console.log("Submitting login form with data:", data);
     startTransition(async () => {
       try {
         const response = await axiosInstance.post("/auth/login", data);
