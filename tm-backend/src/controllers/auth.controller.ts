@@ -2,7 +2,7 @@ import type { Request, Response } from "express";
 import { loginSchema, signupSchema } from "../zod-schemas/auth.schema";
 import { formatZodError } from "../utils/format-error";
 import { User } from "../models/user.model";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import jwt, { type JwtPayload } from "jsonwebtoken";
 import { COOKIE_OPTIONS } from "../constants";
 
@@ -18,7 +18,7 @@ export const handleUserLogin = async (req: Request, res: Response) => {
   const { email, password } = result.data;
 
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).select("+password");
 
     if (!user) {
       return res.status(401).json({
@@ -28,7 +28,6 @@ export const handleUserLogin = async (req: Request, res: Response) => {
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
-
     if (!isPasswordValid) {
       return res.status(401).json({
         success: false,
