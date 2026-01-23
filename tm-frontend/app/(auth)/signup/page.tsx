@@ -11,10 +11,12 @@ import { TaskFlowLogo, AtlassianLogo } from "../signin/page";
 import { toast } from "sonner";
 import axiosInstance from "@/lib/axios-instance";
 import { useRouter } from "next/navigation";
+import { useUserStore } from "@/store/user.store";
 
 export default function SignupPage() {
   const [isPending, startTransition] = useTransition();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const setUser = useUserStore(state => state.setUser);
   const router = useRouter();
 
   const {
@@ -33,6 +35,13 @@ export default function SignupPage() {
       if (response.status === 201 || response.status === 200) {
         toast.success("Account created successfully!");
       }
+
+      const { user } = response.data.data;
+
+      setUser({
+        email : user.email || "",
+        username: user.username || ""
+      })
 
       router.push("/app");
     } catch (error: any) {

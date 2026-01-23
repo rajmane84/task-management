@@ -10,6 +10,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import axiosInstance from "@/lib/axios-instance";
+import { useUserStore } from "@/store/user.store";
 
 export default function LoginPage() {
   const [isPending, startTransition] = useTransition();
@@ -24,18 +25,23 @@ export default function LoginPage() {
   });
 
   const router = useRouter();
+  const setUser = useUserStore((state) => state.setUser);
 
   const onSubmit = (data: LoginInput) => {
     console.log(data);
     startTransition(async () => {
       try {
         const response = await axiosInstance.post("/auth/login", data);
-        console.log(response);
 
         if (response.status === 200) {
           const { user } = response.data.data;
 
           toast.success(`Welcome back, ${user.username}!`);
+
+          setUser({
+            email: user.email || "",
+            username: user.username || "",
+          });
           router.push("/app");
         }
       } catch (error: any) {
@@ -170,19 +176,10 @@ export const AtlassianLogo = () => {
   );
 };
 
-
-export const TaskFlowLogo = (
-  props: React.SVGProps<SVGSVGElement>
-) => {
+export const TaskFlowLogo = (props: React.SVGProps<SVGSVGElement>) => {
   return (
     <div className="rounded bg-white p-1">
-      <svg
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="#0089d1"
-        {...props}
-      >
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="#0089d1" {...props}>
         <path d="M3 3h8v8H3V3zm10 0h8v18h-8V3zM3 13h8v8H3v-8z" />
       </svg>
     </div>
