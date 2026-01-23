@@ -169,10 +169,19 @@ export const AtlassianLogo = () => {
   );
 };
 
-export const TaskFlowLogo = () => {
+
+export const TaskFlowLogo = (
+  props: React.SVGProps<SVGSVGElement>
+) => {
   return (
     <div className="rounded bg-white p-1">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="#0089d1">
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="#0089d1"
+        {...props}
+      >
         <path d="M3 3h8v8H3V3zm10 0h8v18h-8V3zM3 13h8v8H3v-8z" />
       </svg>
     </div>
