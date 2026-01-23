@@ -87,11 +87,9 @@ export const handleUserSignup = async (req: Request, res: Response) => {
       });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 12);
-
     const user = await User.create({
       email,
-      password: hashedPassword,
+      password,
       username: email.split("@")[0],
       bio: "",
     });

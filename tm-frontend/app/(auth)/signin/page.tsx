@@ -26,13 +26,14 @@ export default function LoginPage() {
   const router = useRouter();
 
   const onSubmit = (data: LoginInput) => {
-    console.log("Submitting login form with data:", data);
+    console.log(data);
     startTransition(async () => {
       try {
         const response = await axiosInstance.post("/auth/login", data);
+        console.log(response);
 
         if (response.status === 200) {
-          const { user } = response.data;
+          const { user } = response.data.data;
 
           toast.success(`Welcome back, ${user.username}!`);
           router.push("/app");
