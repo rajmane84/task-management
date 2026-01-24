@@ -15,10 +15,23 @@ import {
 import { TaskFlowLogo } from "@/app/(auth)/signin/page";
 import { cn } from "@/lib/cn";
 import { useUserStore } from "@/store/user.store";
+import axiosInstance from "@/lib/axios-instance";
+
+const TASK_COLORS = [
+  { name: "Blue", value: "bg-blue-500" },
+  { name: "Green", value: "bg-green-500" },
+  { name: "Purple", value: "bg-purple-500" },
+  { name: "Pink", value: "bg-pink-500" },
+  { name: "Orange", value: "bg-orange-500" },
+  { name: "Red", value: "bg-red-500" },
+];
 
 const Navbar = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isUserOptionsOpen, setIsUserOptionsOpen] = useState<boolean>(false);
+  const [taskTitle, setTaskTitle] = useState("");
+  const [selectedColor, setSelectedColor] = useState<string>("blue");
+
   const dropdownRef = useRef<HTMLDivElement>(null);
   const user = useUserStore((state) => state.user);
 
@@ -34,6 +47,53 @@ const Navbar = () => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  async function handleCreateBoard() {
+  if (!taskTitle.trim()) return;
+
+  try {
+    const response = await axiosInstance.post("/board/create", {
+      title: taskTitle.trim(),
+      background: selectedColor,
+    });
+
+    // Optionally handle the response (update local store or state)
+    const createdBoard = response.data.data;
+
+    // Example: if using a store or local state to keep boards
+    // addBoard(createdBoard);
+
+    console.log("Board created successfully:", createdBoard);
+  } catch (error: any) {
+    // Handle errors gracefully
+    if (error.response) {
+      // Server responded with a status code out of 2xx
+      console.error(
+        "Failed to create board:",
+        error.response.data?.message || error.response.statusText
+      );
+      alert(
+        `Failed to create board: ${
+          error.response.data?.message || error.response.statusText
+        }`
+      );
+    } else if (error.request) {
+      // Request made but no response
+      console.error("No response from server:", error.request);
+      alert("No response from server. Please try again later.");
+    } else {
+      // Something else caused the error
+      console.error("Error creating board:", error.message);
+      alert(`Error: ${error.message}`);
+    }
+  } finally {
+    // Reset UI state
+    setTaskTitle("");
+    setSelectedColor("bg-blue-500");
+    setIsModalOpen(false);
+  }
+}
+
 
   return (
     <>
@@ -172,17 +232,98 @@ const Navbar = () => {
             </div>
 
             <div className="space-y-4">
-              <p className="text-sm text-white/60">
-                Ready to start something new? Fill in the details below.
-              </p>
-              <div className="flex h-32 items-center justify-center rounded-lg border-2 border-dashed border-white/10">
-                <span className="text-xs text-white/20 italic">
-                  Form fields placeholder
-                </span>
-              </div>
-              <button className="w-full rounded-md bg-blue-600 py-2 font-medium text-white transition-colors hover:bg-blue-700">
-                Confirm
-              </button>
+              <form
+                className="space-y-6"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  console.log({
+                    title: taskTitle,
+                    color: selectedColor,
+                  });
+                  setIsModalOpen(false);
+                }}
+              >
+                {/* Title input */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-white">
+                    Task title
+                  </label>
+                  <input
+                    type="text"
+                    value={taskTitle}
+                    onChange={(e) => setTaskTitle(e.target.value)}
+                    placeholder="e.g. Design landing page"
+                    autoFocus
+                    className={cn(
+                      "h-10 w-full rounded-md bg-neutral-800 px-3 text-sm text-white",
+                      "ring-1 ring-white/10 outline-none",
+                      "placeholder:text-white/40",
+                      "focus:ring-2 focus:ring-blue-500",
+                    )}
+                    required
+                  />
+                </div>
+
+                {/* Color picker */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-white">
+                    Color
+                  </label>
+
+                  <div className="flex flex-wrap gap-3">
+                    {TASK_COLORS.map((color) => {
+                      const isSelected = selectedColor === color.value;
+
+                      return (
+                        <button
+                          key={color.value}
+                          type="button"
+                          onClick={() => setSelectedColor(color.value)}
+                          className={cn(
+                            "relative flex h-9 w-9 items-center justify-center rounded-full transition",
+                            color.value,
+                            isSelected
+                              ? "ring-2 ring-white ring-offset-2 ring-offset-neutral-900"
+                              : "opacity-80 hover:opacity-100",
+                          )}
+                          aria-label={color.name}
+                        >
+                          {isSelected && (
+                            <div className="h-2.5 w-2.5 rounded-full bg-white" />
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Footer actions */}
+                <div className="flex justify-end gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsModalOpen(false)}
+                    className="rounded-md px-4 py-2 text-sm text-white/60 transition hover:text-white"
+                  >
+                    Cancel
+                  </button>
+
+                  <button
+                    type="submit"
+                    disabled={!taskTitle.trim()}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleCreateBoard();
+                    }}
+                    className={cn(
+                      "rounded-md px-5 py-2 text-sm font-medium text-white",
+                      "bg-blue-600 transition hover:bg-blue-700",
+                      "disabled:cursor-not-allowed disabled:opacity-50",
+                    )}
+                  >
+                    Create Task
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
           <div
