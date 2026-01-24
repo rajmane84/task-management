@@ -14,10 +14,10 @@ import {
 import { TaskFlowLogo } from "@/components/logo";
 import { useUserStore } from "@/store/user.store";
 import { cn } from "@/lib/cn";
-import { handleCreateBoard } from "@/services/board.service";
 import CreateBoardModal from "./models/create-board";
 import type { User as StoreUser } from "@/store/user.store";
 import { SearchBar } from "./search";
+import useCreateTask from "@/hooks/use-create-task";
 
 const Navbar = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -28,6 +28,13 @@ const Navbar = () => {
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const user = useUserStore((state) => state.user);
+  const { createTask } = useCreateTask({
+    taskTitle,
+    selectedColor,
+    setIsModalOpen,
+    setSelectedColor,
+    setTaskTitle,
+  });
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -42,17 +49,6 @@ const Navbar = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  function createTask() {
-    const payload = { title: taskTitle, background: selectedColor };
-    const uiSetterfunc = {
-      setIsModalOpen,
-      setBackground: setSelectedColor,
-      setTitle: setTaskTitle,
-    };
-
-    handleCreateBoard(payload, uiSetterfunc);
-  }
-
   return (
     <>
       <header
@@ -62,12 +58,8 @@ const Navbar = () => {
         )}
       >
         <div className="mx-auto flex h-full max-w-7xl items-center justify-between gap-4">
-
           {/* Logo */}
-          <Link
-            href="/app"
-            className="flex cursor-pointer items-center gap-2"
-          >
+          <Link href="/app" className="flex cursor-pointer items-center gap-2">
             <div className="flex size-9 items-center justify-center rounded-md bg-white">
               <TaskFlowLogo
                 width={20}

@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import axiosInstance from "@/lib/axios-instance";
 import { createCardSchema } from "@/lib/schema/create-card.schema";
 import z from "zod";
+import { useBoardStore } from "@/store/board.store";
 
 interface Card {
   id: string;
@@ -27,6 +28,7 @@ interface BoardContentProps {
 export const BoardContent: React.FC<BoardContentProps> = ({ boardId, initialCards }) => {
   const [cards, setCards] = useState<Card[]>(initialCards);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const setBoard = useBoardStore((state) => state.setBoard);
 
   const form = useForm({
     resolver: zodResolver(createCardSchema),
@@ -56,7 +58,7 @@ export const BoardContent: React.FC<BoardContentProps> = ({ boardId, initialCard
 
   return (
     <main className="w-full flex-1 p-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-4">
         {cards.map(card => (
           <div
             key={card.id}

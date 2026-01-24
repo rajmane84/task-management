@@ -20,9 +20,6 @@ export async function handleCreateBoard(
   try {
     const createdBoard = await createBoardApi({ title, background });
     console.log("Board created successfully:", createdBoard);
-
-    // Example: if using a store or local state to keep boards
-    // addBoard(createdBoard);
   } catch (error: any) {
     handleApiError(error);
   } finally {

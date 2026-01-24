@@ -5,6 +5,7 @@ import {
 } from "../zod-schemas/board.schema";
 import { formatZodError } from "../utils/format-error";
 import { Board } from "../models/board.model";
+import mongoose from "mongoose";
 
 export const handleCreateBoard = async (req: Request, res: Response) => {
   const result = createBoardSchema.safeParse(req.body);
@@ -58,7 +59,7 @@ export const handleGetBoards = async (req: Request, res: Response) => {
   try {
     const boards = await Board.find({ createdBy: user._id });
 
-    if(boards.length === 0) {
+    if (boards.length === 0) {
       return res.status(200).json({
         success: true,
         message: "No boards found",
@@ -113,5 +114,37 @@ export const handleDeleteBoard = async (req: Request, res: Response) => {
       success: false,
       message: "Unexpected error occurred while deleting board",
     });
+  }
+};
+
+export const handleToggleFavorite = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  if (!mongoose.isValidObjectId(id)) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Please enter a valid Board ID" });
+  }
+
+  try {
+    const board = await Board.findById(id);
+
+    if (!board) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Board not found" });
+    }
+
+    board.favorite = !board.favorite;
+    await board.save({ validateBeforeSave: false });
+
+    return res.status(200).json({
+      success: true,
+      message: `Board ${board.favorite ? "added to" : "removed from"} favorites`,
+      data: board,
+    });
+  } catch (error) {
+    console.error("Toggle favorite error:", error);
+    return res.status(500).json({ success: false, message: "Server error" });
   }
 };

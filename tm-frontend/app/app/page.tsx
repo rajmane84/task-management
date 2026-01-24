@@ -2,20 +2,34 @@ import Board from "@/components/board";
 import axiosInstance from "@/lib/axios-instance";
 import { cookies } from "next/headers";
 
+interface ApiResponse<T> {
+  data: T
+};
+
+export interface IBoard {
+  _id: string;
+  title: string;
+  background: string;
+  createdBy: string;
+  favorite: boolean;
+  cards: string[];
+}
+
 const Page = async () => {
-  let boards = [];
+
+  let boards: IBoard[] | any[] = [];
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("accessToken")?.value;
 
   try {
-    const response = await axiosInstance.get("/board/all", {
+    const response = await axiosInstance.get<ApiResponse<IBoard[]>>("/board/all", {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         Cookie: cookieStore.toString(),
       }
     });
     
-    boards = response.data?.data || [];
+    boards = response.data.data || [];
   } catch (error: any) {
     console.error("Fetch Error:", error.response?.status, error.message);
   }
@@ -31,12 +45,13 @@ const Page = async () => {
 
       <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {boards.length > 0 ? (
-          boards.map((board: any, idx: number) => (
+          boards.map((board: IBoard, idx: number) => (
             <Board 
               key={idx} 
               title={board.title} 
-              boardId={board._id || board.id}
-              coverColor={board.color} 
+              boardId={board._id}
+              coverColor={board.background} 
+              favorite={board.favorite}
             />
           ))
         ) : (

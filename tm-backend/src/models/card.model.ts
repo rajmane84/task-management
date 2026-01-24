@@ -51,7 +51,7 @@ const cardSchema = new Schema<ICard>({
   labels: {
     type: [String],
     default: [],
-  }
+  },
 });
 
 export const Card = mongoose.model<ICard>("Card", cardSchema);

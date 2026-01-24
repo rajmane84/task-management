@@ -1,6 +1,6 @@
-import type { NextFunction, Request, Response } from 'express';
-import jwt from 'jsonwebtoken';
-import { type IUser, User } from '../models/user.model';
+import type { NextFunction, Request, Response } from "express";
+import jwt from "jsonwebtoken";
+import { type IUser, User } from "../models/user.model";
 
 export async function validateUser(
   req: Request,
@@ -8,16 +8,18 @@ export async function validateUser(
   next: NextFunction,
 ) {
   const accessToken =
-    req.header('Authorization')?.split(' ')[1] || req.cookies['accessToken'];
+    req.header("Authorization")?.split(" ")[1] || req.cookies["accessToken"];
 
   if (!accessToken) {
-    return res.status(403).json({ success: false, message: 'Token is required' });
+    return res
+      .status(403)
+      .json({ success: false, message: "Token is required" });
   }
 
   const decodedToken = jwt.decode(accessToken) as jwt.JwtPayload;
 
   if (!decodedToken) {
-    return res.status(403).json({ success: false, message: 'Invalid Token' });
+    return res.status(403).json({ success: false, message: "Invalid Token" });
   }
 
   const { _id, email, username } = decodedToken;
@@ -27,11 +29,15 @@ export async function validateUser(
   try {
     user = await User.findById(_id);
   } catch (_error) {
-    return res.status(500).json({ success: false, message: 'Unexpected error' });
+    return res
+      .status(500)
+      .json({ success: false, message: "Unexpected error" });
   }
 
   if (!user) {
-    return res.status(403).json({ success: false, message: 'No such user exists' });
+    return res
+      .status(403)
+      .json({ success: false, message: "No such user exists" });
   }
 
   req.user = {

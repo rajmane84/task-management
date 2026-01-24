@@ -119,14 +119,14 @@ export const handleUpdateCard = async (req: Request, res: Response) => {
     });
   }
 
-  if(!mongoose.isValidObjectId(cardId)){
+  if (!mongoose.isValidObjectId(cardId)) {
     return res.status(400).json({
       success: false,
-      message: "Invalid Card ID"
-    })
+      message: "Invalid Card ID",
+    });
   }
 
-   const result = updateCardSchema.safeParse(req.body);
+  const result = updateCardSchema.safeParse(req.body);
 
   if (!result.success) {
     return res.status(400).json({
@@ -146,7 +146,6 @@ export const handleUpdateCard = async (req: Request, res: Response) => {
   } = result.data;
 
   const updateData: any = {};
-
 
   if (title !== undefined) updateData.title = title;
   if (description !== undefined) updateData.description = description;
@@ -169,7 +168,7 @@ export const handleUpdateCard = async (req: Request, res: Response) => {
     const updatedCard = await Card.findByIdAndUpdate(
       cardId,
       { $set: updateData },
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     );
 
     if (!updatedCard) {
