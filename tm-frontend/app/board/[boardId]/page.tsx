@@ -1,6 +1,6 @@
 import { Star, Share2 } from "lucide-react";
 import Link from "next/link";
-import { TaskFlowLogo } from "@/app/(auth)/signin/page";
+import { TaskFlowLogo } from "@/components/logo";
 import axiosInstance from "@/lib/axios-instance";
 import { cookies } from "next/headers";
 import { BoardContent } from "@/components/board-content";
