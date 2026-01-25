@@ -43,7 +43,7 @@ export default function LoginPage() {
             email: user.email || "",
             username: user.username || "",
           });
-          router.push("/app");
+          router.replace("/app");
         }
       } catch (error: any) {
         const message = error.message || "Invalid email or password";

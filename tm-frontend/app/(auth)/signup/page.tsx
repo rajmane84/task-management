@@ -43,7 +43,7 @@ export default function SignupPage() {
         username: user.username || ""
       })
 
-      router.push("/app");
+      router.replace("/app");
     } catch (error: any) {
       const message = error.message || "Failed to create account. Please try again.";
       toast.error(message);
