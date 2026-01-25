@@ -4,7 +4,6 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import {
   ChevronDown,
-  Search,
   Plus,
   Settings,
   LogOut,
@@ -18,6 +17,7 @@ import CreateBoardModal from "./models/create-board";
 import type { User as StoreUser } from "@/store/user.store";
 import { SearchBar } from "./search";
 import useCreateTask from "@/hooks/use-create-task";
+import { logoutUser } from "@/services/auth.service";
 
 const Navbar = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -148,6 +148,17 @@ const UserOptionItem = ({
 );
 
 const DropDownMenu = ({ user }: { user: StoreUser | null }) => {
+
+  const handleUserLogout = async () => {
+    try {
+      await logoutUser();
+      useUserStore.setState({ user: null });
+      window.location.href = "/signin";
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
   return (
     <div className="ring-opacity-5 absolute right-0 mt-2 w-48 origin-top-right rounded-md border border-white/10 bg-neutral-800 p-1 shadow-xl ring-1 ring-black focus:outline-none">
       <div className="mb-1 border-b border-white/5 px-3 py-2">
@@ -177,7 +188,7 @@ const DropDownMenu = ({ user }: { user: StoreUser | null }) => {
 
       <button
         className="flex w-full items-center gap-2 rounded px-3 py-2 text-sm text-red-400 transition-colors hover:bg-red-400/10"
-        onClick={() => alert("Logging out...")}
+        onClick={handleUserLogout}
       >
         <LogOut size={14} />
         <span>Logout</span>

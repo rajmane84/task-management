@@ -164,3 +164,24 @@ export const refreshAccessToken = async (req: Request, res: Response) => {
       .json({ success: false, message: "Invalid or expired refresh token" });
   }
 };
+
+export const handleUserLogout = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user!._id;
+
+    await User.findByIdAndUpdate(
+      userId,
+      { $unset: { refreshToken: "" } },
+      { new: true },
+    );
+
+    res.clearCookie("refreshToken", COOKIE_OPTIONS).clearCookie("accessToken");
+
+    return res
+      .status(200)
+      .json({ success: true, message: "User logged out successfully" });
+  } catch (error) {
+    console.error("Logout error:", error);
+    return res.status(500).json({ message: "Failed to log out user" });
+  }
+};
