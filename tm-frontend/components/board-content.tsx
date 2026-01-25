@@ -1,24 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import axiosInstance from "@/lib/axios-instance";
 import { createCardSchema } from "@/lib/schema/create-card.schema";
 import z from "zod";
 import { useBoardStore } from "@/store/board.store";
-
-interface Card {
-  id: string;
-  title: string;
-  description?: string;
-  completed: boolean;
-  startDate?: string;
-  dueDate?: string;
-  assignedTo?: string;
-  labels?: string[];
-  boardId: string;
-}
+import type { Card } from "@/store/board.store";
 
 interface BoardContentProps {
   boardId: string;
@@ -26,7 +15,7 @@ interface BoardContentProps {
 }
 
 export const BoardContent: React.FC<BoardContentProps> = ({ boardId, initialCards }) => {
-  const [cards, setCards] = useState<Card[]>(initialCards);
+  const [cards, setCards] = useState<Card[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const form = useForm({
@@ -55,17 +44,21 @@ export const BoardContent: React.FC<BoardContentProps> = ({ boardId, initialCard
     }
   };
 
+  useEffect(() => {
+  setCards(initialCards);
+}, [initialCards]);
+
   return (
     <main className="w-full flex-1 p-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-4">
         {cards.map(card => (
           <div
-            key={card.id}
+            key={card._id}
             className="rounded-md bg-black/25 p-4 text-white shadow-sm"
           >
             <h2 className="font-semibold">{card.title}</h2>
             {card.description && <p className="text-sm text-white/60 mt-1">{card.description}</p>}
-            {card.dueDate && <p className="text-xs text-white/40 mt-2">Due: {card.dueDate}</p>}
+            {card.dueDate && <p className="text-xs text-white/40 mt-2">Due: {new Date(card.dueDate).toLocaleDateString()}</p>}
           </div>
         ))}
 

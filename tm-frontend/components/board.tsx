@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { Star } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react"; 
 import { useState } from "react";
 import { cn } from "@/lib/cn";
 import { toggleFavoriteApi } from "@/helpers/board.helper";
@@ -18,59 +18,79 @@ type BoardProps = {
   favorite: boolean;
 };
 
+type Card = {
+  _id: string;
+  title: string;
+  description?: string;
+  completed: boolean;
+  startDate: Date | null;
+  dueDate: Date | null;
+  comments: string[];
+  labels: [];
+};
+
+type FetchCardsResponse = {
+  data: Card[];
+};
+
 const Board = ({ title, coverColor, boardId, favorite }: BoardProps) => {
   const router = useRouter();
   const [hovered, setHovered] = useState(false);
   const [isFavorite, setIsFavorite] = useState(favorite);
   const setBoard = useBoardStore((state) => state.setBoard);
 
-async function handleClick() {
-    let response;
-
+  const handleClick = async () => {
     try {
-      response = await axiosInstance.get(`/card/all/${boardId}`, {
-        withCredentials: true,
+      const response = await axiosInstance.get<FetchCardsResponse>(
+        `/card/all/${boardId}`,
+        { withCredentials: true },
+      );
+      const cards = Array.isArray(response?.data?.data)
+        ? response.data.data
+        : [];
+
+      setBoard({
+        _id: boardId,
+        title,
+        background: coverColor,
+        cards,
       });
+
+      router.push(`/board/${boardId}`);
     } catch (error) {
       console.error("Failed to fetch cards", error);
-      toast.error("Failed to fetch cards")
-      response = { data: { data: [] } };
+      toast.error("Failed to fetch cards");
     }
-    const cards = Array.isArray(response?.data?.data) ? response.data.data : [];
+  };
 
-    setBoard({
-      _id: boardId,
-      title,
-      background: coverColor,
-      cards,
-    });
-
-    router.push(`/board/${boardId}`);
-  }
-
-  async function toggleFavorite(e: React.MouseEvent) {
+  const toggleFavorite = async (e: React.MouseEvent) => {
     e.stopPropagation();
+    const previousFavorite = isFavorite;
 
     try {
-      setIsFavorite((prev) => !prev); // optimistic update
+      setIsFavorite((prev) => !prev);
       await toggleFavoriteApi(boardId);
     } catch (error: any) {
-      setIsFavorite(favorite); // rollback on error
+      setIsFavorite(previousFavorite);
       handleApiError(error);
     }
-  }
+  };
 
   return (
     <button
+      type="button"
       onClick={handleClick}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="group relative flex min-h-26 min-w-55 cursor-pointer flex-col overflow-hidden rounded-lg bg-neutral-800 text-left shadow-sm transition hover:shadow-md"
+      className={cn(
+        "group relative flex min-h-26 min-w-55 cursor-pointer flex-col overflow-hidden rounded-lg bg-neutral-800 text-left shadow-sm transition hover:shadow-md",
+      )}
     >
       <div className={cn("relative w-full flex-1", coverColor)}>
         <AnimatePresence>
           {hovered && (
             <motion.div
+              key="favorite"
               initial={{ x: 12, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: 12, opacity: 0 }}
