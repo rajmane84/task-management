@@ -7,7 +7,7 @@ import { Eye, EyeClosed, Loader2 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { signupSchema, type SignupInput } from "@/lib/schema/signup.schema";
 import Link from "next/link";
-import { TaskFlowLogo, AtlassianLogo } from "../signin/page";
+import { TaskFlowLogo, AtlassianLogo } from "@/components/logo";
 import { toast } from "sonner";
 import axiosInstance from "@/lib/axios-instance";
 import { useRouter } from "next/navigation";
