@@ -1,54 +1,34 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { Star, Share2 } from "lucide-react";
 import Link from "next/link";
 import { TaskFlowLogo } from "@/components/logo";
-import axiosInstance from "@/lib/axios-instance";
-import { cookies } from "next/headers";
 import { BoardContent } from "@/components/board-content";
+import { useParams } from "next/navigation";
+import { useBoardStore } from "@/store/board.store";
+import type { Card } from "@/store/board.store";
 
-interface Card {
-  id: string;
-  title: string;
-  description?: string;
-  completed: boolean;
-  startDate?: string;
-  dueDate?: string;
-  assignedTo?: string;
-  labels?: string[];
-  boardId: string;
-}
+const Page = () => {
+  const params = useParams();
+  const boardId = params.boardId as string;
+  const { board } = useBoardStore((state) => state);
 
-interface PageParams {
-  boardId: string;
-}
+  // Start with empty array
+  const [cards, setCards] = useState<Card[]>([]);
 
-const Page = async ({ params }: { params: PageParams }) => {
-  const { boardId } = await params;
+  // Update cards whenever board.cards changes
+  useEffect(() => {
+    if (board?.cards) {
+      setCards(board.cards);
+    }
+  }, [board?.cards]);
 
-  const cookieStore =  await cookies();
-  const cookieHeader = cookieStore
-    .getAll()
-    .map((cookie) => `${cookie.name}=${cookie.value}`)
-    .join("; ");
-
-  const coverColor = "bg-blue-600";
-
-  let cards: Card[] = [];
-
-  try {
-    const response = await axiosInstance.get<Card[]>(`/card/all/${boardId}`, {
-      headers: {
-        Cookie: cookieHeader,
-      },
-    });
-    cards = Array.isArray(response.data) ? response.data : [];
-    console.log("Fetched cards:", cards);
-  } catch (error) {
-    console.error("Failed to fetch cards:", error);
-  }
+  const coverColor = board?.background || "bg-blue-600";
 
   return (
     <div className={`flex min-h-screen flex-col ${coverColor}`}>
-      <BoardNavbar />
+      <BoardNavbar title={board?.title} />
       <div className="h-14" /> {/* spacing for sticky navbar */}
       <BoardContent boardId={boardId} initialCards={cards} />
     </div>
@@ -57,7 +37,7 @@ const Page = async ({ params }: { params: PageParams }) => {
 
 export default Page;
 
-const BoardNavbar = () => {
+const BoardNavbar = ({ title = "Fallback title" }: { title?: string }) => {
   return (
     <nav className="sticky top-0 z-20 flex h-14 items-center justify-between bg-black/25 px-6 shadow-sm backdrop-blur-md">
       <Link
@@ -71,7 +51,7 @@ const BoardNavbar = () => {
       </Link>
 
       <h1 className="truncate text-lg font-semibold text-white sm:text-xl">
-        Board Title
+        {title}
       </h1>
 
       <div className="flex items-center gap-2">

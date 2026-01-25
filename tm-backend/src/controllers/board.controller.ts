@@ -57,7 +57,7 @@ export const handleGetBoards = async (req: Request, res: Response) => {
   const user = req.user!;
 
   try {
-    const boards = await Board.find({ createdBy: user._id });
+    const boards = await Board.find({ createdBy: user._id }).select("-cards");
 
     if (boards.length === 0) {
       return res.status(200).json({

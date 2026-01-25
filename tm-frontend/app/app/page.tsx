@@ -12,7 +12,6 @@ export interface IBoard {
   background: string;
   createdBy: string;
   favorite: boolean;
-  cards: string[];
 }
 
 const Page = async () => {

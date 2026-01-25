@@ -22,13 +22,12 @@ interface Card {
 
 interface BoardContentProps {
   boardId: string;
-  initialCards: Card[];
+  initialCards: any[];
 }
 
 export const BoardContent: React.FC<BoardContentProps> = ({ boardId, initialCards }) => {
   const [cards, setCards] = useState<Card[]>(initialCards);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const setBoard = useBoardStore((state) => state.setBoard);
 
   const form = useForm({
     resolver: zodResolver(createCardSchema),

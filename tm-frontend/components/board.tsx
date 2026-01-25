@@ -7,6 +7,9 @@ import { useState } from "react";
 import { cn } from "@/lib/cn";
 import { toggleFavoriteApi } from "@/helpers/board.helper";
 import { handleApiError } from "@/helpers/handle-error";
+import { useBoardStore } from "@/store/board.store";
+import axiosInstance from "@/lib/axios-instance";
+import { toast } from "sonner";
 
 type BoardProps = {
   title: string;
@@ -19,8 +22,29 @@ const Board = ({ title, coverColor, boardId, favorite }: BoardProps) => {
   const router = useRouter();
   const [hovered, setHovered] = useState(false);
   const [isFavorite, setIsFavorite] = useState(favorite);
+  const setBoard = useBoardStore((state) => state.setBoard);
 
-  function handleClick() {
+async function handleClick() {
+    let response;
+
+    try {
+      response = await axiosInstance.get(`/card/all/${boardId}`, {
+        withCredentials: true,
+      });
+    } catch (error) {
+      console.error("Failed to fetch cards", error);
+      toast.error("Failed to fetch cards")
+      response = { data: { data: [] } };
+    }
+    const cards = Array.isArray(response?.data?.data) ? response.data.data : [];
+
+    setBoard({
+      _id: boardId,
+      title,
+      background: coverColor,
+      cards,
+    });
+
     router.push(`/board/${boardId}`);
   }
 
@@ -28,7 +52,7 @@ const Board = ({ title, coverColor, boardId, favorite }: BoardProps) => {
     e.stopPropagation();
 
     try {
-      setIsFavorite(prev => !prev); // optimistic update
+      setIsFavorite((prev) => !prev); // optimistic update
       await toggleFavoriteApi(boardId);
     } catch (error: any) {
       setIsFavorite(favorite); // rollback on error
@@ -41,9 +65,9 @@ const Board = ({ title, coverColor, boardId, favorite }: BoardProps) => {
       onClick={handleClick}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="group relative flex min-h-26 min-w-55 flex-col overflow-hidden rounded-lg cursor-pointer bg-neutral-800 text-left shadow-sm transition hover:shadow-md"
+      className="group relative flex min-h-26 min-w-55 cursor-pointer flex-col overflow-hidden rounded-lg bg-neutral-800 text-left shadow-sm transition hover:shadow-md"
     >
-      <div className={cn("relative flex-1 w-full", coverColor)}>
+      <div className={cn("relative w-full flex-1", coverColor)}>
         <AnimatePresence>
           {hovered && (
             <motion.div
@@ -51,7 +75,7 @@ const Board = ({ title, coverColor, boardId, favorite }: BoardProps) => {
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: 12, opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="absolute right-2 top-2"
+              className="absolute top-2 right-2"
               onClick={toggleFavorite}
             >
               <div className="flex h-7 w-7 items-center justify-center rounded-md bg-black/30 backdrop-blur">
@@ -60,7 +84,7 @@ const Board = ({ title, coverColor, boardId, favorite }: BoardProps) => {
                   fill={isFavorite ? "currentColor" : "none"}
                   className={cn(
                     "transition-colors",
-                    isFavorite ? "text-yellow-500" : "text-white"
+                    isFavorite ? "text-yellow-500" : "text-white",
                   )}
                 />
               </div>
@@ -77,6 +101,5 @@ const Board = ({ title, coverColor, boardId, favorite }: BoardProps) => {
     </button>
   );
 };
-
 
 export default Board;

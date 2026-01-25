@@ -38,7 +38,7 @@ export const handleGetCards = async (req: Request, res: Response) => {
       });
     }
 
-    const cards = await Card.find({ board: boardId });
+    const cards = await Card.find({ board: boardId }).select("-board");
     return res.status(200).json({
       success: true,
       message: "All cards fetched successfully",
@@ -97,7 +97,6 @@ export const handleCreateCard = async (req: Request, res: Response) => {
     return res.status(201).json({
       success: true,
       message: "Card created successfully",
-      data: card,
     });
   } catch (error) {
     console.error("Create card error:", error);
@@ -169,7 +168,7 @@ export const handleUpdateCard = async (req: Request, res: Response) => {
       cardId,
       { $set: updateData },
       { new: true, runValidators: true },
-    );
+    ).select("-board");
 
     if (!updatedCard) {
       return res.status(404).json({
