@@ -109,7 +109,7 @@ const Navbar = () => {
               />
             </button>
 
-            {isUserOptionsOpen && <DropDownMenu user={user} />}
+            {isUserOptionsOpen && <DropDownMenu user={user} closeMenu={() => setIsUserOptionsOpen(false)} />}
           </div>
         </div>
       </header>
@@ -133,13 +133,16 @@ const UserOptionItem = ({
   icon,
   label,
   href,
+  onClick,
 }: {
   icon: React.ReactNode;
   label: string;
   href: string;
+  onClick?: () => void;
 }) => (
   <Link
     href={href}
+    onClick={onClick}
     className="flex items-center gap-2 rounded px-3 py-2 text-sm text-white/80 transition-colors hover:bg-white/5 hover:text-white"
   >
     {icon}
@@ -147,10 +150,17 @@ const UserOptionItem = ({
   </Link>
 );
 
-const DropDownMenu = ({ user }: { user: StoreUser | null }) => {
 
+const DropDownMenu = ({
+  user,
+  closeMenu,
+}: {
+  user: StoreUser | null;
+  closeMenu: () => void;
+}) => {
   const handleUserLogout = async () => {
     try {
+      closeMenu();
       await logoutUser();
       useUserStore.setState({ user: null });
       window.location.href = "/signin";
@@ -160,35 +170,38 @@ const DropDownMenu = ({ user }: { user: StoreUser | null }) => {
   };
 
   return (
-    <div className="ring-opacity-5 absolute right-0 mt-2 w-48 origin-top-right rounded-md border border-white/10 bg-neutral-800 p-1 shadow-xl ring-1 ring-black focus:outline-none">
+    <div className="absolute right-0 mt-2 w-48 origin-top-right rounded-md border border-white/10 bg-neutral-800 p-1 shadow-xl ring-1 ring-black ring-opacity-5">
       <div className="mb-1 border-b border-white/5 px-3 py-2">
         <p className="text-xs text-white/40">Signed in as</p>
         <p className="truncate text-sm font-medium text-white">
-          {user?.email ? user.email : "something@xyz.com"}
+          {user?.email ?? "something@xyz.com"}
         </p>
       </div>
 
       <UserOptionItem
         icon={<User size={14} />}
         label="Profile"
-        href="/profile"
+        href="/app/profile"
+        onClick={closeMenu}
       />
       <UserOptionItem
         icon={<Settings size={14} />}
         label="Settings"
-        href="/settings"
+        href="/app/settings"
+        onClick={closeMenu}
       />
       <UserOptionItem
         icon={<CreditCard size={14} />}
         label="Billing"
-        href="/billing"
+        href="/app/billing"
+        onClick={closeMenu}
       />
 
       <div className="my-1 h-px bg-white/5" />
 
       <button
-        className="flex w-full items-center gap-2 rounded px-3 py-2 text-sm text-red-400 transition-colors hover:bg-red-400/10"
         onClick={handleUserLogout}
+        className="flex w-full items-center gap-2 rounded px-3 py-2 text-sm text-red-400 transition-colors hover:bg-red-400/10"
       >
         <LogOut size={14} />
         <span>Logout</span>
