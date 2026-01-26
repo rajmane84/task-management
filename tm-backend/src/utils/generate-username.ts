@@ -5,7 +5,9 @@ export async function generateUsername(email: string): Promise<string> {
     throw new Error("Email is required to generate username");
   }
 
-  const base: string = (email?.split("@")[0] ?? "").toLowerCase().replace(/[^a-z0-9_]/g, "");
+  const base: string = (email?.split("@")[0] ?? "")
+    .toLowerCase()
+    .replace(/[^a-z0-9_]/g, "");
 
   if (!base) {
     throw new Error("Unable to generate username from email");

@@ -97,7 +97,7 @@ export const handleCreateCard = async (req: Request, res: Response) => {
     return res.status(201).json({
       success: true,
       message: "Card created successfully",
-      data: card
+      data: card,
     });
   } catch (error) {
     console.error("Create card error:", error);
@@ -150,7 +150,8 @@ export const handleUpdateCard = async (req: Request, res: Response) => {
   if (title !== undefined) updateData.title = title;
   if (description !== undefined) updateData.description = description;
   if (completed !== undefined) updateData.completed = completed;
-  if (startDate !== undefined && startDate) updateData.startDate = new Date(startDate);
+  if (startDate !== undefined && startDate)
+    updateData.startDate = new Date(startDate);
   if (dueDate !== undefined && dueDate) updateData.dueDate = new Date(dueDate);
   if (labels !== undefined) updateData.labels = labels;
 

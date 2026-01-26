@@ -143,7 +143,10 @@ export default function LoginPage() {
         </div>
 
         <div className="space-y-3">
-          <button className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-sm border border-gray-300 p-2 font-semibold text-[#42526e] transition-colors hover:bg-gray-50">
+          <button
+            onClick={() => alert("This feature will be available soon!!")}
+            className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-sm border border-gray-300 p-2 font-semibold text-[#42526e] transition-colors hover:bg-gray-50"
+          >
             <img
               src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
               alt="Google"
@@ -151,7 +154,10 @@ export default function LoginPage() {
             />
             Continue with Google
           </button>
-          <button className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-sm border border-gray-300 p-2 font-semibold text-[#42526e] transition-colors hover:bg-gray-50">
+          <button
+            onClick={() => alert("This feature will be available soon!!")}
+            className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-sm border border-gray-300 p-2 font-semibold text-[#42526e] transition-colors hover:bg-gray-50"
+          >
             <AtlassianLogo />
             Continue with Atlassian
           </button>

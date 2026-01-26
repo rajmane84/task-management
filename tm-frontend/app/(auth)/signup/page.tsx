@@ -16,7 +16,7 @@ import { useUserStore } from "@/store/user.store";
 export default function SignupPage() {
   const [isPending, startTransition] = useTransition();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const setUser = useUserStore(state => state.setUser);
+  const setUser = useUserStore((state) => state.setUser);
   const router = useRouter();
 
   const {
@@ -28,28 +28,29 @@ export default function SignupPage() {
   });
 
   const onSubmit = (data: SignupInput) => {
-  startTransition(async () => {
-    try {
-      const response = await axiosInstance.post("/auth/register", data);
+    startTransition(async () => {
+      try {
+        const response = await axiosInstance.post("/auth/register", data);
 
-      if (response.status === 201 || response.status === 200) {
-        toast.success("Account created successfully!");
+        if (response.status === 201 || response.status === 200) {
+          toast.success("Account created successfully!");
+        }
+
+        const { user } = response.data.data;
+
+        setUser({
+          email: user.email || "",
+          username: user.username || "",
+        });
+
+        router.replace("/app");
+      } catch (error: any) {
+        const message =
+          error.message || "Failed to create account. Please try again.";
+        toast.error(message);
       }
-
-      const { user } = response.data.data;
-
-      setUser({
-        email : user.email || "",
-        username: user.username || ""
-      })
-
-      router.replace("/app");
-    } catch (error: any) {
-      const message = error.message || "Failed to create account. Please try again.";
-      toast.error(message);
-    }
-  });
-};
+    });
+  };
 
   const inputBaseStyles =
     "w-full p-2 border outline-none text-neutral-800 focus:ring-2 focus:ring-blue-500 bg-neutral-100/50 transition-all duration-300 placeholder:text-gray-500 rounded-sm";
@@ -159,7 +160,10 @@ export default function SignupPage() {
 
         {/* Social Buttons */}
         <div className="space-y-3">
-          <button className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-sm border border-gray-300 p-2 font-semibold text-[#42526e] shadow-sm transition-colors hover:bg-gray-50">
+          <button
+            onClick={() => alert("This feature will be available soon!!")}
+            className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-sm border border-gray-300 p-2 font-semibold text-[#42526e] shadow-sm transition-colors hover:bg-gray-50"
+          >
             <img
               src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
               alt="Google"
@@ -167,7 +171,10 @@ export default function SignupPage() {
             />
             Continue with Google
           </button>
-          <button className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-sm border border-gray-300 p-2 font-semibold text-[#42526e] shadow-sm transition-colors hover:bg-gray-50">
+          <button
+            onClick={() => alert("This feature will be available soon!!")}
+            className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-sm border border-gray-300 p-2 font-semibold text-[#42526e] shadow-sm transition-colors hover:bg-gray-50"
+          >
             <AtlassianLogo />
             Continue with Atlassian
           </button>
