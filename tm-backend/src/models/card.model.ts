@@ -36,8 +36,9 @@ const cardSchema = new Schema<ICard>({
     default: null,
   },
   assignedTo: {
-    type: mongoose.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: "User",
+    default: null,
   },
   comments: {
     type: [mongoose.Types.ObjectId],
@@ -47,6 +48,7 @@ const cardSchema = new Schema<ICard>({
   board: {
     type: mongoose.Types.ObjectId,
     ref: "Board",
+    required: [true, "A card must belong to a board"],
   },
   labels: {
     type: [String],

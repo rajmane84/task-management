@@ -5,6 +5,7 @@ import { User } from "../models/user.model";
 import bcrypt from "bcryptjs";
 import jwt, { type JwtPayload } from "jsonwebtoken";
 import { COOKIE_OPTIONS } from "../constants";
+import { generateUsername } from "../utils/generate-username";
 
 export const handleUserLogin = async (req: Request, res: Response) => {
   const result = loginSchema.safeParse(req.body);
@@ -87,10 +88,12 @@ export const handleUserSignup = async (req: Request, res: Response) => {
       });
     }
 
+    const username = await generateUsername(email);
+
     const user = await User.create({
       email,
       password,
-      username: email.split("@")[0],
+      username,
       bio: "",
     });
 

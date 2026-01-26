@@ -1,13 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import axiosInstance from "@/lib/axios-instance";
-import { createCardSchema } from "@/lib/schema/create-card.schema";
-import z from "zod";
-import { useBoardStore } from "@/store/board.store";
 import type { Card } from "@/store/board.store";
+import CreateCardModal from "./models/create-card";
 
 interface BoardContentProps {
   boardId: string;
@@ -17,32 +12,6 @@ interface BoardContentProps {
 export const BoardContent: React.FC<BoardContentProps> = ({ boardId, initialCards }) => {
   const [cards, setCards] = useState<Card[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const form = useForm({
-    resolver: zodResolver(createCardSchema),
-    defaultValues: {
-      title: "",
-      description: "",
-      completed: false,
-      startDate: "",
-      dueDate: "",
-      assignedTo: "",
-      labels: [],
-      boardId,
-    },
-  });
-
-  const handleCreateCard = async (data: z.infer<typeof createCardSchema>) => {
-    try {
-      const response = await axiosInstance.post("/card/create", data);
-      setCards(prev => [...prev, response.data]);
-      setIsModalOpen(false);
-      form.reset({ boardId });
-    } catch (error) {
-      console.error("Failed to create card:", error);
-      alert("Failed to create card. Try again.");
-    }
-  };
 
   useEffect(() => {
   setCards(initialCards);
@@ -73,53 +42,11 @@ export const BoardContent: React.FC<BoardContentProps> = ({ boardId, initialCard
 
       {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-xl border border-white/10 bg-neutral-900 p-6 shadow-2xl">
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-xl font-bold text-white">Create Card</h2>
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="text-white/40 transition-colors hover:text-white"
-              >
-                ✕
-              </button>
-            </div>
-
-            <form className="space-y-4" onSubmit={form.handleSubmit(handleCreateCard)}>
-              <div className="space-y-1">
-                <label className="text-sm text-white">Title</label>
-                <input
-                  {...form.register("title")}
-                  className="w-full rounded-md bg-neutral-800 px-3 py-2 text-white placeholder:text-white/40 outline-none ring-1 ring-white/10 focus:ring-2 focus:ring-blue-500"
-                  placeholder="Card title"
-                  required
-                />
-                {form.formState.errors.title && (
-                  <p className="text-xs text-red-400">{form.formState.errors.title.message}</p>
-                )}
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-sm text-white">Description</label>
-                <textarea
-                  {...form.register("description")}
-                  className="w-full rounded-md bg-neutral-800 px-3 py-2 text-white placeholder:text-white/40 outline-none ring-1 ring-white/10 focus:ring-2 focus:ring-blue-500"
-                  placeholder="Optional description"
-                  rows={3}
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="w-full rounded-md bg-blue-600 py-2 text-white font-medium hover:bg-blue-700 transition"
-              >
-                Create
-              </button>
-            </form>
-          </div>
-
-          <div className="fixed inset-0 -z-10" onClick={() => setIsModalOpen(false)} />
-        </div>
+        <CreateCardModal
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        boardId={boardId}
+      />
       )}
     </main>
   );
