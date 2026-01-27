@@ -203,7 +203,7 @@ export const handleForgotPassword = async (req: Request, res: Response) => {
   if (!result.success) {
     return res
       .status(400)
-      .json({ success: false, message: formatZodError(result.error) });
+      .json({ success: false, errors: formatZodError(result.error) });
   }
 
   const { email } = result.data;
@@ -262,7 +262,7 @@ export const handleResetPassword = async (req: Request, res: Response) => {
   if (!result.success) {
     return res
       .status(400)
-      .json({ success: false, message: formatZodError(result.error) });
+      .json({ success: false, errors: formatZodError(result.error) });
   }
 
   const { newPassword, token } = result.data;

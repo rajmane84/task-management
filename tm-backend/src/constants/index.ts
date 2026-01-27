@@ -6,3 +6,5 @@ export const COOKIE_OPTIONS = {
 };
 
 export const NODE_ENV = process.env.NODE_ENV;
+
+export const FILE_SIZE = 1024 * 1024 * 5;
