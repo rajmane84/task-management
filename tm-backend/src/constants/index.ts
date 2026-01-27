@@ -4,3 +4,5 @@ export const COOKIE_OPTIONS = {
   sameSite: "strict" as const,
   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 };
+
+export const NODE_ENV = process.env.NODE_ENV;

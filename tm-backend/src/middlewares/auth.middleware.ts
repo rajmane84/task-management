@@ -22,7 +22,7 @@ export async function validateUser(
     return res.status(403).json({ success: false, message: "Invalid Token" });
   }
 
-  const { _id, email, username } = decodedToken;
+  const { _id, name, email, username } = decodedToken;
 
   let user: IUser | null;
 
@@ -42,6 +42,7 @@ export async function validateUser(
 
   req.user = {
     _id,
+    name,
     email,
     username,
   };
