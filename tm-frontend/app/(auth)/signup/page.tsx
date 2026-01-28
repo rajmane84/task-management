@@ -41,6 +41,7 @@ export default function SignupPage() {
       name: user.name || "",
       email: user.email || "",
       username: user.username || "",
+      avatarUrl: user.avatar || ""
     });
 
     router.replace("/app");

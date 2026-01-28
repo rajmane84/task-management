@@ -62,6 +62,7 @@ export const handleUserLogin = async (req: Request, res: Response) => {
             name: user.name,
             username: user.username,
             email: user.email,
+            avatar: user.avatar
           },
         },
       });
@@ -125,6 +126,7 @@ export const handleUserSignup = async (req: Request, res: Response) => {
             username: user.username,
             email: user.email,
             name: user.name,
+            avatar: user.avatar
           },
         },
       });

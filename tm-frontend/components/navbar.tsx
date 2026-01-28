@@ -53,7 +53,7 @@ const Navbar = () => {
     <>
       <header
         className={cn(
-          "h-16 w-full border-b border-white/10 bg-neutral-900 px-4",
+          "min-h-16 h-16 w-full border-b border-white/10 bg-neutral-900 px-4",
           "sticky top-0 z-40",
         )}
       >

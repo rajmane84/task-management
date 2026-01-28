@@ -28,25 +28,25 @@ export default function LoginPage() {
   const router = useRouter();
   const setUser = useUserStore((state) => state.setUser);
 
-const onSubmit = async (data: LoginInput) => {
-      const response = await loginUser(data);
-      if (!response) return;
+  const onSubmit = async (data: LoginInput) => {
+    const response = await loginUser(data);
+    if (!response) return;
 
-      const { user } = response.data.data;
-      console.log("user", user);
+    const { user } = response.data.data;
+    console.log("user", user);
 
-      toast.success(`Welcome back, ${user.name}!`);
+    toast.success(`Welcome back, ${user.name}!`);
 
-      startTransition(() => {
-        setUser({
-          name: user.name || "",
-          email: user.email || "",
-          username: user.username || "",
-        });
-        router.replace("/app");
+    startTransition(() => {
+      setUser({
+        name: user.name || "",
+        email: user.email || "",
+        username: user.username || "",
+        avatarUrl: user.avatar || "",
       });
+      router.replace("/app");
+    });
   };
-
 
   const inputBaseStyles =
     "w-full p-2 border outline-none text-neutral-800 focus:ring-2 focus:ring-blue-500 bg-neutral-100/50 transition-all duration-300 placeholder:text-gray-500";
@@ -90,7 +90,9 @@ const onSubmit = async (data: LoginInput) => {
               <input
                 {...register("password")}
                 type={isPasswordVisible ? "text" : "password"}
-                aria-label={isPasswordVisible ? "Hide password" : "Show password"}
+                aria-label={
+                  isPasswordVisible ? "Hide password" : "Show password"
+                }
                 placeholder="Enter password"
                 className={cn(
                   inputBaseStyles,
