@@ -6,7 +6,6 @@ export const updateUserSchema = z.object({
     .string()
     .min(3, "Username must be of atleast 3 characters")
     .optional(),
-  email: z.string().email("Invalid email address").optional(),
   bio: z.string().optional(),
 });
 

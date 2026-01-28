@@ -248,11 +248,11 @@ export const handleForgotPassword = async (req: Request, res: Response) => {
       message:
         "If an account with that email exists, a reset link has been sent.",
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Forgot password error:", error);
     return res
       .status(500)
-      .json({ success: false, message: "Something went wrong" });
+      .json({ success: false, message: error.message || "Something went wrong" });
   }
 };
 

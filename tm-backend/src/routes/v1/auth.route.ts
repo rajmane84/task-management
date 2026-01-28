@@ -21,6 +21,6 @@ authRouter.get("/logout", validateUser, handleUserLogout);
 
 authRouter.post("/forgot-password", validateUser, handleForgotPassword);
 
-authRouter.post("/reest-password", validateUser, handleResetPassword);
+authRouter.post("/reset-password", validateUser, handleResetPassword);
 
 export default authRouter;
