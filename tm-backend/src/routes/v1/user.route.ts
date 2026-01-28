@@ -19,7 +19,7 @@ userRouter.post("/check-username", handleCheckUsernameExists);
 
 userRouter.patch("/", handleUpdateUserDetails);
 
-userRouter.patch("/avatar", upload.single('avatar'),  handleUpdateAvatar);
+userRouter.patch("/avatar", upload.single("avatar"), handleUpdateAvatar);
 
 userRouter.delete("/me", handleDeleteUser);
 

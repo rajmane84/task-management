@@ -1,6 +1,11 @@
 import z from "zod"
 
 export const signupSchema = z.strictObject({
+  name: z
+    .string()
+    .min(3, "Name must be of at least 3 characters")
+    .trim()
+    .nonoptional("Name is required"),
   email: z
     .string()
     .min(1, "Email is required")

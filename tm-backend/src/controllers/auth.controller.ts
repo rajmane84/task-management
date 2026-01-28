@@ -59,6 +59,7 @@ export const handleUserLogin = async (req: Request, res: Response) => {
         data: {
           user: {
             _id: user._id,
+            name: user.name,
             username: user.username,
             email: user.email,
           },
@@ -123,6 +124,7 @@ export const handleUserSignup = async (req: Request, res: Response) => {
             _id: user._id,
             username: user.username,
             email: user.email,
+            name: user.name,
           },
         },
       });
@@ -252,7 +254,10 @@ export const handleForgotPassword = async (req: Request, res: Response) => {
     console.error("Forgot password error:", error);
     return res
       .status(500)
-      .json({ success: false, message: error.message || "Something went wrong" });
+      .json({
+        success: false,
+        message: error.message || "Something went wrong",
+      });
   }
 };
 

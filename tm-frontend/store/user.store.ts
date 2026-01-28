@@ -2,9 +2,10 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
 export type User = {
-    username: string;
-    email: string;
-}
+  name: string;
+  username: string;
+  email: string;
+};
 
 type UserStore = {
   user: User | null;
@@ -22,6 +23,6 @@ export const useUserStore = create<UserStore>()(
     {
       name: "user-storage",
       storage: createJSONStorage(() => localStorage),
-    }
-  )
+    },
+  ),
 );

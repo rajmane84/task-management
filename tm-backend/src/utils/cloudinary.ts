@@ -15,7 +15,7 @@ cloudinaryV2.config({
  */
 export const uploadOnCloudinary = async (
   localFilePath: string,
-  folder: string = "avatars"
+  folder: string = "avatars",
 ): Promise<string | null> => {
   if (!localFilePath) return null;
 

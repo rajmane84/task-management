@@ -9,9 +9,9 @@ import { loginSchema, type LoginInput } from "@/lib/schema/login.schema";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import axiosInstance from "@/lib/axios-instance";
 import { useUserStore } from "@/store/user.store";
 import { AtlassianLogo, TaskFlowLogo } from "@/components/logo";
+import { loginUser } from "@/services/auth.service";
 
 export default function LoginPage() {
   const [isPending, startTransition] = useTransition();
@@ -28,30 +28,25 @@ export default function LoginPage() {
   const router = useRouter();
   const setUser = useUserStore((state) => state.setUser);
 
-  const onSubmit = (data: LoginInput) => {
-    console.log(data);
-    startTransition(async () => {
-      try {
-        const response = await axiosInstance.post("/auth/login", data);
+const onSubmit = async (data: LoginInput) => {
+      const response = await loginUser(data);
+      if (!response) return;
 
-        if (response.status === 200) {
-          const { user } = response.data.data;
+      const { user } = response.data.data;
+      console.log("user", user);
 
-          toast.success(`Welcome back, ${user.username}!`);
+      toast.success(`Welcome back, ${user.name}!`);
 
-          setUser({
-            email: user.email || "",
-            username: user.username || "",
-          });
-          router.replace("/app");
-        }
-      } catch (error: any) {
-        const message = error.message || "Invalid email or password";
-        toast.error(message);
-        console.error("Login failed:", error);
-      }
-    });
+      startTransition(() => {
+        setUser({
+          name: user.name || "",
+          email: user.email || "",
+          username: user.username || "",
+        });
+        router.replace("/app");
+      });
   };
+
 
   const inputBaseStyles =
     "w-full p-2 border outline-none text-neutral-800 focus:ring-2 focus:ring-blue-500 bg-neutral-100/50 transition-all duration-300 placeholder:text-gray-500";
@@ -75,6 +70,7 @@ export default function LoginPage() {
             <input
               {...register("email")}
               placeholder="Enter email"
+              type="email"
               className={cn(
                 inputBaseStyles,
                 errors.email
@@ -94,6 +90,7 @@ export default function LoginPage() {
               <input
                 {...register("password")}
                 type={isPasswordVisible ? "text" : "password"}
+                aria-label={isPasswordVisible ? "Hide password" : "Show password"}
                 placeholder="Enter password"
                 className={cn(
                   inputBaseStyles,

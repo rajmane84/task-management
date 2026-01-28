@@ -86,8 +86,7 @@ axiosInstance.interceptors.response.use(
     }
 
     // Standard error handling
-    const errorMessage = (error.response?.data as any)?.message || "Something went wrong";
-    return Promise.reject(new Error(errorMessage));
+    return Promise.reject(error);
   }
 );
 

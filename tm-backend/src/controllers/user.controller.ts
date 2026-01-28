@@ -46,12 +46,10 @@ export const handleUpdateUserDetails = async (req: Request, res: Response) => {
     const result = updateUserSchema.safeParse(req.body);
 
     if (!result.success) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          errors: formatZodError(result.error),
-        });
+      return res.status(400).json({
+        success: false,
+        errors: formatZodError(result.error),
+      });
     }
 
     const updateData = result.data;
@@ -64,13 +62,11 @@ export const handleUpdateUserDetails = async (req: Request, res: Response) => {
       "-password -refreshToken -passwordResetToken -passwordResetExpires",
     );
 
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "User details updated successfully",
-        data: updatedUser,
-      });
+    res.status(200).json({
+      success: true,
+      message: "User details updated successfully",
+      data: updatedUser,
+    });
   } catch (error) {
     console.error("Update user details error:", error);
     res.status(500).json({ success: false, message: "Something went wrong" });
@@ -139,7 +135,7 @@ export const handleDeleteUser = async (req: Request, res: Response) => {
     const deletedBoards = await Board.deleteMany({ createdBy: user._id });
     await user.deleteOne();
 
-    res.clearCookie("accessToken").clearCookie("refreshToken", COOKIE_OPTIONS)
+    res.clearCookie("accessToken").clearCookie("refreshToken", COOKIE_OPTIONS);
 
     res.status(200).json({
       success: true,
@@ -161,12 +157,10 @@ export const handleCheckUsernameExists = async (
   try {
     const result = checkUsernameSchema.safeParse(req.body);
     if (!result.success) {
-      return res
-        .status(400)
-        .json({
-          message: "Invalid input",
-          errors: formatZodError(result.error),
-        });
+      return res.status(400).json({
+        message: "Invalid input",
+        errors: formatZodError(result.error),
+      });
     }
 
     const { username } = result.data;
@@ -176,21 +170,17 @@ export const handleCheckUsernameExists = async (
     });
 
     if (userExists) {
-      return res
-        .status(200)
-        .json({
-          success: true,
-          message: "This username is already taken",
-          data: { usernameExists: false },
-        });
+      return res.status(200).json({
+        success: true,
+        message: "This username is already taken",
+        data: { usernameExists: false },
+      });
     } else {
-      res
-        .status(200)
-        .json({
-          success: true,
-          message: "This username is available",
-          data: { usernameExists: true },
-        });
+      res.status(200).json({
+        success: true,
+        message: "This username is available",
+        data: { usernameExists: true },
+      });
     }
   } catch (error) {
     console.error("Check username error:", error);

@@ -9,9 +9,9 @@ import { signupSchema, type SignupInput } from "@/lib/schema/signup.schema";
 import Link from "next/link";
 import { TaskFlowLogo, AtlassianLogo } from "@/components/logo";
 import { toast } from "sonner";
-import axiosInstance from "@/lib/axios-instance";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "@/store/user.store";
+import { registerUser } from "@/services/auth.service";
 
 export default function SignupPage() {
   const [isPending, startTransition] = useTransition();
@@ -27,29 +27,24 @@ export default function SignupPage() {
     resolver: zodResolver(signupSchema),
   });
 
-  const onSubmit = (data: SignupInput) => {
-    startTransition(async () => {
-      try {
-        const response = await axiosInstance.post("/auth/register", data);
+  const onSubmit = async (data: SignupInput) => {
+    const response = await registerUser(data);
 
-        if (response.status === 201 || response.status === 200) {
-          toast.success("Account created successfully!");
-        }
+  if (!response) return;
 
-        const { user } = response.data.data;
+  startTransition(() => {
+    toast.success("Account created successfully!");
 
-        setUser({
-          email: user.email || "",
-          username: user.username || "",
-        });
+    const { user } = response.data.data;
 
-        router.replace("/app");
-      } catch (error: any) {
-        const message =
-          error.message || "Failed to create account. Please try again.";
-        toast.error(message);
-      }
+    setUser({
+      name: user.name || "",
+      email: user.email || "",
+      username: user.username || "",
     });
+
+    router.replace("/app");
+  });
   };
 
   const inputBaseStyles =
@@ -59,7 +54,7 @@ export default function SignupPage() {
     <div className="flex min-h-screen flex-col items-center justify-center bg-[#0089d1] p-4 font-sans">
       {/* Brand Header */}
       <div className="mb-8 flex items-center gap-2 text-white">
-        <TaskFlowLogo />
+      <TaskFlowLogo />
         <span className="text-3xl font-bold tracking-tight">TaskFlow</span>
       </div>
 
@@ -70,6 +65,24 @@ export default function SignupPage() {
         </h2>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          {/* Name Field */}
+          <div>
+            <input
+              {...register("name")}
+              placeholder="Enter name"
+              className={cn(
+                inputBaseStyles,
+                errors.email
+                  ? "border-red-500 focus:ring-red-200"
+                  : "border-gray-300",
+              )}
+            />
+            {errors.email && (
+              <p className="mt-1 text-left text-xs font-medium text-red-500">
+                {errors.email.message}
+              </p>
+            )}
+          </div>
           {/* Email Field */}
           <div>
             <input

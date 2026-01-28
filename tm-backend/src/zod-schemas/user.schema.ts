@@ -10,8 +10,8 @@ export const updateUserSchema = z.object({
 });
 
 export const checkUsernameSchema = z.object({
-    username: z
+  username: z
     .string()
     .min(3, "Username must be of atleast 3 characters")
     .nonoptional("Username is required"),
-})
+});
