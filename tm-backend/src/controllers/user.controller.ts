@@ -7,7 +7,6 @@ import {
 } from "../zod-schemas/user.schema";
 import { formatZodError } from "../utils/format-error";
 import { Board } from "../models/board.model";
-import e from "express";
 import { COOKIE_OPTIONS } from "../constants";
 
 export const handleGetCurrentUser = async (req: Request, res: Response) => {

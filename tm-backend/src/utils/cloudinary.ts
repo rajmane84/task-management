@@ -28,12 +28,16 @@ export const uploadOnCloudinary = async (
     console.log("Cloudinary public_id:", fileMetaData.public_id);
 
     // Delete local file after successful upload
-    fs.existsSync(localFilePath) && fs.unlinkSync(localFilePath);
+    if (fs.existsSync(localFilePath)) {
+      fs.unlinkSync(localFilePath);
+    }
 
     return fileMetaData.secure_url;
   } catch (err) {
     // Delete local file even if upload fails
-    fs.existsSync(localFilePath) && fs.unlinkSync(localFilePath);
+    if (fs.existsSync(localFilePath)) {
+      fs.unlinkSync(localFilePath);
+    }
 
     console.error("Cloudinary upload error:", err);
     return null;
