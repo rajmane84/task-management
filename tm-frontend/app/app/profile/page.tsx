@@ -2,9 +2,8 @@
 import { useState } from "react";
 import DeleteAccount from "@/components/delete-account";
 import { useUserStore } from "@/store/user.store";
-import Image from "next/image";
-import { getInitials } from "@/lib/get-initials";
 import ProfileSettings from "@/components/profile-settings";
+import Avatar from "@/components/avatar";
 
 const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -18,19 +17,7 @@ const ProfilePage = () => {
       <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
           {/* Avatar */}
-          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-linear-to-br from-blue-500 to-emerald-400 text-2xl font-semibold text-neutral-900">
-            {user.avatarUrl ? (
-              <Image
-                src={user.avatarUrl}
-                alt="user-avatar"
-                width={80}
-                height={80}
-                className="h-full w-full object-cover"
-              />
-            ) : (
-              <span>{getInitials(user.name)}</span>
-            )}
-          </div>
+          <Avatar avatarUrl={user.avatarUrl} name={user.name} />
 
           {/* User Info */}
           <div>
