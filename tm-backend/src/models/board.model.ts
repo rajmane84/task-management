@@ -2,11 +2,18 @@ import mongoose, { Schema, Document } from "mongoose";
 
 export interface IBoard extends Document {
   title: string;
-  background?: string;
+  background?: {
+    type: String,
+    value: String
+  };
   createdBy: mongoose.Types.ObjectId;
-  //   members: mongoose.Types.ObjectId[]; -- FUTURE IMPROVEMENT --
+  members: {
+    user: mongoose.Types.ObjectId;
+    role: String
+  }[];
   favorite: boolean;
   cards: mongoose.Types.ObjectId[];
+  visibility: String;
 }
 
 const boardSchema = new Schema<IBoard>(
@@ -19,8 +26,15 @@ const boardSchema = new Schema<IBoard>(
       unique: true,
     },
     background: {
-      type: String,
-      default: "", // check how to set default background image or color and add a default value here
+      type: {
+        type: String,
+        enum: ["image", "color"],
+        default: "color"
+      },
+      value: {
+        type: String,
+        default: "#ffffff" // white color
+      }
     },
     createdBy: {
       type: Schema.Types.ObjectId,
@@ -31,11 +45,29 @@ const boardSchema = new Schema<IBoard>(
       type: Boolean,
       default: false,
     },
+    members: [
+      {
+        user: {
+          type: Schema.Types.ObjectId,
+          ref: 'User'
+        },
+        role: {
+          type: String,
+          enum: ["admin", "editor", "viewer"], // For now we'll keep only one admin ie the creator and others will be editors or viewers
+          default: "editor"
+        }
+      }
+    ],
     cards: {
       type: [Schema.Types.ObjectId],
       ref: "Card",
       default: [],
     },
+    visibility: {
+      type: String,
+      enum: ["public", "private"],
+      default: "private"
+    }
   },
   { timestamps: true },
 );
