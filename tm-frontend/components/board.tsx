@@ -11,6 +11,7 @@ import { useBoardStore } from "@/store/board.store";
 import axiosInstance from "@/lib/axios-instance";
 import { toast } from "sonner";
 import { Background } from "@/types/board.type";
+import { handleGetBoardDetails } from "@/services/board.service";
 
 type BoardProps = {
   title: string;
@@ -30,10 +31,6 @@ type Card = {
   labels: [];
 };
 
-type FetchCardsResponse = {
-  data: Card[];
-};
-
 const Board = ({ title, background, boardId, favorite }: BoardProps) => {
   const router = useRouter();
   const [hovered, setHovered] = useState(false);
@@ -42,13 +39,11 @@ const Board = ({ title, background, boardId, favorite }: BoardProps) => {
 
   const handleClick = async () => {
     try {
-      const response = await axiosInstance.get<FetchCardsResponse>(
-        `/card/all/${boardId}`,
-        { withCredentials: true },
-      );
-      const cards = Array.isArray(response?.data?.data)
-        ? response.data.data
-        : [];
+        const data = await handleGetBoardDetails(boardId);
+
+        if(!data) return;
+
+        const cards = Array.isArray(data.cards) ? data.cards : []
 
       setBoard({
         _id: boardId,

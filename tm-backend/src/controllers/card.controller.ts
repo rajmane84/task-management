@@ -94,6 +94,12 @@ export const handleCreateCard = async (req: Request, res: Response) => {
       board: boardId,
     });
 
+    await Board.findByIdAndUpdate(
+      boardId,
+      { $push: { cards: card._id } },
+      { new: true },
+    );
+
     return res.status(201).json({
       success: true,
       message: "Card created successfully",

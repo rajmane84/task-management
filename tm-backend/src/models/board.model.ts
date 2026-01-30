@@ -33,7 +33,7 @@ const boardSchema = new Schema<IBoard>(
       },
       value: {
         type: String,
-        default: "#ffffff" // white color
+        default: "#525252" // neutral-600 color
       }
     },
     createdBy: {

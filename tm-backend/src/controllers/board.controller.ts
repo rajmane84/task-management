@@ -673,7 +673,8 @@ export const handleGetBoardDetails = async (req: Request, res: Response) => {
   try {
     const board = await Board.findById(id)
       .populate("createdBy", "name email")
-      .populate("members.user", "name email");
+      .populate("members.user", "name email")
+      .populate("cards", "title description startDate dueDate");
 
     if (!board) {
       return res.status(404).json({

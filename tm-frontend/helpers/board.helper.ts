@@ -40,3 +40,8 @@ export async function toggleFavoriteApi(boardId: string): Promise<IBoard> {
   const response = await axiosInstance.get<ApiResponse<IBoard>>(`/board/toggle/${boardId}`);
   return response.data.data
 }
+
+export async function getBoardDetailsApi(boardId: string){
+  const response = await axiosInstance.get(`/board/${boardId}`);
+  return response.data.data;
+}

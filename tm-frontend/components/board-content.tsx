@@ -24,25 +24,28 @@ export const BoardContent: React.FC<BoardContentProps> = ({
 
   return (
     <main className="w-full flex-1 p-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-6">
         {cards.map((card) => (
           <button
             key={card._id}
             onClick={() => setSelectedCard(card)}
-            className="text-left rounded-md bg-black/25 p-4 text-white shadow-sm transition hover:bg-black/35"
+            className="rounded-md bg-black/25 p-4 text-left text-white shadow-sm transition hover:bg-black/35"
           >
             <h2 className="font-semibold">{card.title}</h2>
 
             {card.description && (
-              <p className="text-sm text-white/60 mt-1 line-clamp-2">
+              <p className="mt-1 line-clamp-2 text-sm text-white/60">
                 {card.description}
               </p>
             )}
 
             {card.dueDate && (
-              <p className="text-xs text-white/40 mt-2">
-                Due: {new Date(card.dueDate).toLocaleDateString()}
-              </p>
+              <div className="mt-2 inline-flex items-center gap-1 rounded-md bg-red-700 px-2 py-1 text-xs text-white">
+                <span className="opacity-70 font-semibold">Due: </span>
+                <span className="font-medium">
+                  {new Date(card.dueDate).toLocaleDateString()}
+                </span>
+              </div>
             )}
           </button>
         ))}
@@ -50,7 +53,7 @@ export const BoardContent: React.FC<BoardContentProps> = ({
         {/* Add Card */}
         <button
           onClick={() => setIsModalOpen(true)}
-          className="flex items-center justify-center h-12 rounded-md bg-white/20 text-white text-sm font-medium hover:bg-white/20 transition"
+          className="flex h-12 items-center justify-center rounded-md bg-white/20 text-sm font-medium text-white transition hover:bg-white/20"
         >
           + Add Card
         </button>
