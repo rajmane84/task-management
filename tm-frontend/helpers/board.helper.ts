@@ -22,7 +22,7 @@ export async function createBoardApi({
     title,
     background,
   });
-  return response.data.data;
+  return response;
 }
 
 export async function getAllBoardsApi(token?: string) :Promise<IBoard[]> {

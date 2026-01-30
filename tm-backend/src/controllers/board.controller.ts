@@ -260,10 +260,10 @@ export const handleGetFavoriteBoards = async (req: Request, res: Response) => {
   }
 };
 
-export const handleChangeVisibility =  async(req: Request, res: Response) => {
+export const handleChangeVisibility = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { visibility } = req.body;
-  const userId = req.user!.id;
+  const userId = req.user!._id;
 
   if (!mongoose.Types.ObjectId.isValid(id as string)) {
     return res.status(400).json({
@@ -289,12 +289,11 @@ export const handleChangeVisibility =  async(req: Request, res: Response) => {
       });
     }
 
-    const isAdmin =
-      board.createdBy.toString() === userId ||
-      board.members.some(
-        (member) =>
-          member.user.toString() === userId && member.role === "admin"
-      );
+    const isAdmin = board.createdBy.toString() === userId.toString() ||
+    board.members.some(
+      (member) =>
+        member.user.toString() === userId && member.role === "admin"
+    );
 
     if (!isAdmin) {
       return res.status(403).json({
@@ -303,7 +302,7 @@ export const handleChangeVisibility =  async(req: Request, res: Response) => {
       });
     }
 
-     board.visibility = visibility;
+    board.visibility = visibility;
     await board.save();
 
     return res.status(200).json({
@@ -314,7 +313,6 @@ export const handleChangeVisibility =  async(req: Request, res: Response) => {
         visibility: board.visibility,
       },
     });
-
   } catch (error) {
     console.error("Change Visibility error:", error);
 
@@ -326,8 +324,8 @@ export const handleChangeVisibility =  async(req: Request, res: Response) => {
 };
 
 export const handleUpdateBoard = async (req: Request, res: Response) => {
-   const { id } = req.params;
-  const userId = req.user?.id;
+  const { id } = req.params;
+  const userId = req.user?._id;
 
   if (!mongoose.Types.ObjectId.isValid(id as string)) {
     return res.status(400).json({
@@ -345,7 +343,7 @@ export const handleUpdateBoard = async (req: Request, res: Response) => {
     });
   }
 
-  const {title, background} = result.data;
+  const { title, background } = result.data;
 
   try {
     const board = await Board.findById(id);
@@ -362,7 +360,7 @@ export const handleUpdateBoard = async (req: Request, res: Response) => {
       board.members.some(
         (member) =>
           member.user.toString() === userId &&
-          ["admin", "editor"].includes(member.role as string)
+          ["admin", "editor"].includes(member.role as string),
       );
 
     if (!canEdit) {
@@ -388,7 +386,7 @@ export const handleUpdateBoard = async (req: Request, res: Response) => {
       data: {
         id: board._id,
         title: board.title,
-        background: board.background
+        background: board.background,
       },
     });
   } catch (error) {
@@ -403,7 +401,7 @@ export const handleUpdateBoard = async (req: Request, res: Response) => {
 
 export const addMemberToBoard = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const adminId = req.user?.id;
+  const adminId = req.user!._id;
 
   if (!mongoose.Types.ObjectId.isValid(id as string)) {
     return res.status(400).json({
@@ -445,7 +443,7 @@ export const addMemberToBoard = async (req: Request, res: Response) => {
       board.createdBy.toString() === adminId ||
       board.members.some(
         (member) =>
-          member.user.toString() === adminId && member.role === "admin"
+          member.user.toString() === adminId && member.role === "admin",
       );
 
     if (!isAdmin) {
@@ -465,7 +463,7 @@ export const addMemberToBoard = async (req: Request, res: Response) => {
 
     // Prevent duplicate members
     const alreadyMember = board.members.some(
-      (member) => member.user.toString() === userId
+      (member) => member.user.toString() === userId,
     );
 
     if (alreadyMember) {
@@ -503,7 +501,7 @@ export const addMemberToBoard = async (req: Request, res: Response) => {
 
 export const removeMemberFromBoard = async (req: Request, res: Response) => {
   const { id, userId } = req.params;
-  const adminId = req.user!.id;
+  const adminId = req.user!._id;
 
   if (
     !mongoose.Types.ObjectId.isValid(id as string) ||
@@ -529,7 +527,7 @@ export const removeMemberFromBoard = async (req: Request, res: Response) => {
     const isAdmin =
       board.createdBy.toString() === adminId ||
       board.members.some(
-        (m) => m.user.toString() === adminId && m.role === "admin"
+        (m) => m.user.toString() === adminId && m.role === "admin",
       );
 
     if (!isAdmin) {
@@ -548,7 +546,7 @@ export const removeMemberFromBoard = async (req: Request, res: Response) => {
     }
 
     const memberIndex = board.members.findIndex(
-      (m) => m.user.toString() === userId
+      (m) => m.user.toString() === userId,
     );
 
     if (memberIndex === -1) {
@@ -576,7 +574,7 @@ export const removeMemberFromBoard = async (req: Request, res: Response) => {
 
 export const handleUpdateRole = async (req: Request, res: Response) => {
   const { id, userId } = req.params;
-  const adminId = req.user!.id;
+  const adminId = req.user!._id;
 
   if (
     !mongoose.Types.ObjectId.isValid(id as string) ||
@@ -597,7 +595,7 @@ export const handleUpdateRole = async (req: Request, res: Response) => {
     });
   }
 
-  const {role} = result.data;
+  const { role } = result.data;
 
   try {
     const board = await Board.findById(id);
@@ -613,7 +611,7 @@ export const handleUpdateRole = async (req: Request, res: Response) => {
     const isAdmin =
       board.createdBy.toString() === adminId ||
       board.members.some(
-        (m) => m.user.toString() === adminId && m.role === "admin"
+        (m) => m.user.toString() === adminId && m.role === "admin",
       );
 
     if (!isAdmin) {
@@ -631,9 +629,7 @@ export const handleUpdateRole = async (req: Request, res: Response) => {
       });
     }
 
-    const member = board.members.find(
-      (m) => m.user.toString() === userId
-    );
+    const member = board.members.find((m) => m.user.toString() === userId);
 
     if (!member) {
       return res.status(404).json({
@@ -663,10 +659,9 @@ export const handleUpdateRole = async (req: Request, res: Response) => {
   }
 };
 
-
 export const handleGetBoardDetails = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const userId = req.user!.id;
+  const userId = req.user!._id;
 
   if (!mongoose.Types.ObjectId.isValid(id as string)) {
     return res.status(400).json({
@@ -689,9 +684,7 @@ export const handleGetBoardDetails = async (req: Request, res: Response) => {
 
     const isMember =
       board.createdBy._id.toString() === userId ||
-      board.members.some(
-        (m) => m.user._id.toString() === userId
-      );
+      board.members.some((m) => m.user._id.toString() === userId);
 
     if (!isMember && board.visibility === "private") {
       return res.status(403).json({
@@ -712,4 +705,3 @@ export const handleGetBoardDetails = async (req: Request, res: Response) => {
     });
   }
 };
-

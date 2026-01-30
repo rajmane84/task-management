@@ -1,3 +1,4 @@
+import { Background } from "@/types/board.type";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -16,7 +17,7 @@ export type BoardStore = {
   board: {
     _id?: string;
     title: string;
-    background: string;
+    background: Background;
     cards: Card[];
   };
   setBoard: (board: BoardStore["board"]) => void;
@@ -28,7 +29,10 @@ export type BoardStore = {
 
 const initialState = {
   title: "",
-  background: "Blue",
+  background: {
+    type: "color",
+    value: "#ffffff"
+  } as const,
   cards: [],
 };
 

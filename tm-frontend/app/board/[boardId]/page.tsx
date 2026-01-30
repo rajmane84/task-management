@@ -20,10 +20,19 @@ const Page = () => {
     }
   }, [board?.cards]);
 
-  const coverColor = board?.background || "bg-blue-600";
+  const background = board.background;
 
   return (
-    <div className={`flex min-h-screen flex-col ${coverColor}`}>
+    <div className={`flex min-h-screen flex-col`} 
+    style={
+          background.type === "color"
+            ? { background: background.value }
+            : {
+                backgroundImage: `url(${background.value})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }
+        }>
       <BoardNavbar title={board?.title} />
       <div className="h-14" /> {/* spacing for sticky navbar */}
       <BoardContent boardId={boardId} initialCards={cards} />

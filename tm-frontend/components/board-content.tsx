@@ -50,7 +50,7 @@ export const BoardContent: React.FC<BoardContentProps> = ({
         {/* Add Card */}
         <button
           onClick={() => setIsModalOpen(true)}
-          className="flex items-center justify-center h-12 rounded-md bg-white/10 text-white/80 text-sm font-medium hover:bg-white/20 transition"
+          className="flex items-center justify-center h-12 rounded-md bg-white/20 text-white text-sm font-medium hover:bg-white/20 transition"
         >
           + Add Card
         </button>

@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { Star } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react"; 
+import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { cn } from "@/lib/cn";
 import { toggleFavoriteApi } from "@/helpers/board.helper";
@@ -10,10 +10,11 @@ import { handleApiError } from "@/helpers/handle-error";
 import { useBoardStore } from "@/store/board.store";
 import axiosInstance from "@/lib/axios-instance";
 import { toast } from "sonner";
+import { Background } from "@/types/board.type";
 
 type BoardProps = {
   title: string;
-  coverColor: string;
+  background: Background;
   boardId: string;
   favorite: boolean;
 };
@@ -33,7 +34,7 @@ type FetchCardsResponse = {
   data: Card[];
 };
 
-const Board = ({ title, coverColor, boardId, favorite }: BoardProps) => {
+const Board = ({ title, background, boardId, favorite }: BoardProps) => {
   const router = useRouter();
   const [hovered, setHovered] = useState(false);
   const [isFavorite, setIsFavorite] = useState(favorite);
@@ -52,7 +53,10 @@ const Board = ({ title, coverColor, boardId, favorite }: BoardProps) => {
       setBoard({
         _id: boardId,
         title,
-        background: coverColor,
+        background: {
+          type: background.type,
+          value: background.value
+        },
         cards,
       });
 
@@ -86,7 +90,18 @@ const Board = ({ title, coverColor, boardId, favorite }: BoardProps) => {
         "group relative flex min-h-26 min-w-55 cursor-pointer flex-col overflow-hidden rounded-lg bg-neutral-800 text-left shadow-sm transition hover:shadow-md",
       )}
     >
-      <div className={cn("relative w-full flex-1", coverColor)}>
+      <div
+        className={cn("relative w-full flex-1")}
+        style={
+          background.type === "color"
+            ? { background: background.value }
+            : {
+                backgroundImage: `url(${background.value})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }
+        }
+      >
         <AnimatePresence>
           {hovered && (
             <motion.div

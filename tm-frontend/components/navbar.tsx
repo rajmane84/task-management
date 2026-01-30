@@ -16,25 +16,15 @@ import { cn } from "@/lib/cn";
 import CreateBoardModal from "./models/create-board";
 import type { User as StoreUser } from "@/store/user.store";
 import { SearchBar } from "./search";
-import useCreateTask from "@/hooks/use-create-task";
 import { logoutUser } from "@/services/auth.service";
 
 const Navbar = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isUserOptionsOpen, setIsUserOptionsOpen] = useState<boolean>(false);
-  const [taskTitle, setTaskTitle] = useState("");
-  const [selectedColor, setSelectedColor] = useState<string>("blue");
   const [searchVal, setSearchVal] = useState("");
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const user = useUserStore((state) => state.user);
-  const { createTask } = useCreateTask({
-    taskTitle,
-    selectedColor,
-    setIsModalOpen,
-    setSelectedColor,
-    setTaskTitle,
-  });
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -117,12 +107,7 @@ const Navbar = () => {
       {/* Modal */}
       {isModalOpen && (
         <CreateBoardModal
-          taskTitle={taskTitle}
-          setTaskTitle={setTaskTitle}
-          selectedColor={selectedColor}
           setIsModalOpen={setIsModalOpen}
-          setSelectedColor={setSelectedColor}
-          createTask={createTask}
         />
       )}
     </>

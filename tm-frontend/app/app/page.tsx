@@ -1,5 +1,6 @@
 import Board from "@/components/board";
 import axiosInstance from "@/lib/axios-instance";
+import { Background } from "@/types/board.type";
 import { cookies } from "next/headers";
 
 interface ApiResponse<T> {
@@ -9,7 +10,7 @@ interface ApiResponse<T> {
 export interface IBoard {
   _id: string;
   title: string;
-  background: string;
+  background: Background;
   createdBy: string;
   favorite: boolean;
 }
@@ -49,8 +50,8 @@ const Page = async () => {
               key={idx} 
               title={board.title} 
               boardId={board._id}
-              coverColor={board.background} 
               favorite={board.favorite}
+              background={board.background}
             />
           ))
         ) : (
