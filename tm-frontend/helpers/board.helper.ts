@@ -1,14 +1,10 @@
-import axiosInstance from "@/lib/axios-instance";
-import { CreateBoardPayload } from "@/types/board.type";
-
-interface ApiResponse<T> {
-  data: T;
-}
+import axiosInstance, { MyAxiosInstance } from "@/lib/axios-instance";
+import { Background, CreateBoardPayload } from "@/types/board.type";
 
 export interface IBoard {
   _id: string;
   title: string;
-  background: string;
+  background: Background;
   createdBy: string;
   favorite: boolean;
   cards: string[];
@@ -18,27 +14,16 @@ export async function createBoardApi({
   title,
   background,
 }: CreateBoardPayload) {
-  const response = await axiosInstance.post("/board/create", {
+  const {data} = await axiosInstance.post<MyAxiosInstance>("/board/create", {
     title,
     background,
   });
-  return response;
+  return data;
 }
 
-export async function getAllBoardsApi(token?: string) :Promise<IBoard[]> {
-  const response = await axiosInstance.get<ApiResponse<IBoard[]>>("/board/all", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      Cookie: cookieStore.toString(),
-    },
-  });
-
-  return response.data.data
-}
-
-export async function toggleFavoriteApi(boardId: string): Promise<IBoard> {
-  const response = await axiosInstance.get<ApiResponse<IBoard>>(`/board/toggle/${boardId}`);
-  return response.data.data
+export async function toggleFavoriteApi(boardId: string) {
+  const {data} = await axiosInstance.get<MyAxiosInstance<IBoard>>(`/board/toggle/${boardId}`);
+  return data;
 }
 
 export async function getBoardDetailsApi(boardId: string){

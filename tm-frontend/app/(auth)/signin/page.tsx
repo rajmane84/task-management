@@ -29,21 +29,21 @@ export default function LoginPage() {
   const setUser = useUserStore((state) => state.setUser);
 
   const onSubmit = async (data: LoginInput) => {
-    const response = await loginUser(data);
-    if (!response) return;
+    const userDetails = await loginUser(data);
+    if (!userDetails) return;
 
-    const { user } = response.data.data;
-    console.log("user", user);
+    const { name, email, avatar, username } = userDetails;
 
-    toast.success(`Welcome back, ${user.name}!`);
+    toast.success(`Welcome back, ${name}!`);
 
     startTransition(() => {
       setUser({
-        name: user.name || "",
-        email: user.email || "",
-        username: user.username || "",
-        avatarUrl: user.avatar || "",
+        name,
+        email,
+        username,
+        avatarUrl: avatar,
       });
+
       router.replace("/app");
     });
   };
@@ -57,7 +57,7 @@ export default function LoginPage() {
     }
 
     generateAccessToken()
-  }, [])
+  }, [router])
 
   const inputBaseStyles =
     "w-full p-2 border outline-none text-neutral-800 focus:ring-2 focus:ring-blue-500 bg-neutral-100/50 transition-all duration-300 placeholder:text-gray-500";

@@ -1,28 +1,16 @@
 import Board from "@/components/board";
-import axiosInstance from "@/lib/axios-instance";
-import { Background } from "@/types/board.type";
+import { IBoard } from "@/helpers/board.helper";
+import axiosInstance, { MyAxiosInstance } from "@/lib/axios-instance";
 import { cookies } from "next/headers";
-
-interface ApiResponse<T> {
-  data: T
-};
-
-export interface IBoard {
-  _id: string;
-  title: string;
-  background: Background;
-  createdBy: string;
-  favorite: boolean;
-}
 
 const Page = async () => {
 
   let boards: IBoard[] | any[] = [];
   const cookieStore = await cookies();
-  const accessToken = cookieStore.get("accessToken")?.value;
+  const accessToken = cookieStore.get("accessToken")!.value;
 
   try {
-    const response = await axiosInstance.get<ApiResponse<IBoard[]>>("/board/all", {
+    const response = await axiosInstance.get<MyAxiosInstance<IBoard[]>>("/board/all", {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         Cookie: cookieStore.toString(),

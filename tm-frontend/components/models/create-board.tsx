@@ -5,6 +5,7 @@ import { BACKGROUND_IMAGES, TASK_COLORS } from "@/constants";
 import type { Background } from "@/types/board.type";
 import { handleCreateBoard } from "@/services/board.service";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 interface CreateBoardModalProps {
   setIsModalOpen: (val: boolean) => void;
@@ -33,10 +34,11 @@ const CreateBoardModal: FC<CreateBoardModalProps> = ({
       },
     };
 
-    const response = await handleCreateBoard(payload);
+    const message = await handleCreateBoard(payload);
 
-    if(!response){
+    if(!message){
       setIsModalOpen(false);
+      toast.success(message || "Board created successfully");
       return;
     }
 

@@ -28,36 +28,36 @@ export default function SignupPage() {
   });
 
   const onSubmit = async (data: SignupInput) => {
-    const response = await registerUser(data);
+    const userDetails = await registerUser(data);
 
-  if (!response) return;
+    if (!userDetails) return;
 
-  startTransition(() => {
-    toast.success("Account created successfully!");
+    startTransition(() => {
+      toast.success("Account created successfully!");
 
-    const { user } = response.data.data;
+      const { name, email, username, avatar } = userDetails;
 
-    setUser({
-      name: user.name || "",
-      email: user.email || "",
-      username: user.username || "",
-      avatarUrl: user.avatar || ""
+      setUser({
+        name,
+        email,
+        username,
+        avatarUrl: avatar,
+      });
+
+      router.replace("/app");
     });
-
-    router.replace("/app");
-  });
   };
 
   useEffect(() => {
-      async function generateAccessToken() {
-        const data = await getAccessToken();
-        if(!data) return;
-        
-        router.replace("/app")
-      }
-  
-      generateAccessToken()
-    }, [])
+    async function generateAccessToken() {
+      const data = await getAccessToken();
+      if (!data) return;
+
+      router.replace("/app");
+    }
+
+    generateAccessToken();
+  }, []);
 
   const inputBaseStyles =
     "w-full p-2 border outline-none text-neutral-800 focus:ring-2 focus:ring-blue-500 bg-neutral-100/50 transition-all duration-300 placeholder:text-gray-500 rounded-sm";
@@ -66,7 +66,7 @@ export default function SignupPage() {
     <div className="flex min-h-screen flex-col items-center justify-center bg-[#0089d1] p-4 font-sans">
       {/* Brand Header */}
       <div className="mb-8 flex items-center gap-2 text-white">
-      <TaskFlowLogo />
+        <TaskFlowLogo />
         <span className="text-3xl font-bold tracking-tight">TaskFlow</span>
       </div>
 

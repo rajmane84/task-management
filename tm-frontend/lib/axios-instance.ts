@@ -6,6 +6,12 @@ declare module "axios" {
   }
 }
 
+export interface MyAxiosInstance <T = unknown> {
+  success: boolean;
+  message: string;
+  data?: T
+}
+
 const devEnv = process.env.NEXT_PUBLIC_ENV === "development";
 const BASE_URL = devEnv ? "http://localhost:5000" : process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -41,7 +47,7 @@ axiosInstance.interceptors.request.use(
 );
 
 axiosInstance.interceptors.response.use(
-    (response: AxiosResponse) => {
+    (response: AxiosResponse<MyAxiosInstance>) => {
         // Any status code within the range of 2xx triggers this function
         return response;
     },
@@ -65,7 +71,7 @@ axiosInstance.interceptors.response.use(
 
       try {
         // calling refresh token endpoint
-        await axiosInstance.post("/auth/refresh-token");
+        await axiosInstance.get("/auth/refresh-token");
         
         isRefreshing = false;
         processQueue(null);

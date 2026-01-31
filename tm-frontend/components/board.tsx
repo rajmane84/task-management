@@ -11,7 +11,7 @@ import { useBoardStore } from "@/store/board.store";
 import axiosInstance from "@/lib/axios-instance";
 import { toast } from "sonner";
 import { Background } from "@/types/board.type";
-import { handleGetBoardDetails } from "@/services/board.service";
+import { handleGetBoardDetails, handleToggleFavorite } from "@/services/board.service";
 
 type BoardProps = {
   title: string;
@@ -66,13 +66,16 @@ const Board = ({ title, background, boardId, favorite }: BoardProps) => {
     e.stopPropagation();
     const previousFavorite = isFavorite;
 
-    try {
-      setIsFavorite((prev) => !prev);
-      await toggleFavoriteApi(boardId);
-    } catch (error: any) {
+    setIsFavorite((prev) => !prev);
+
+    const message = await handleToggleFavorite(boardId);
+
+    if(!message){
       setIsFavorite(previousFavorite);
-      handleApiError(error);
     }
+
+    toast.success(message)
+
   };
 
   return (

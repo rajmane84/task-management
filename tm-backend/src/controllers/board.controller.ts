@@ -73,7 +73,7 @@ export const handleGetBoards = async (req: Request, res: Response) => {
 
   try {
     const boards = await Board.find({ createdBy: user._id }).select(
-      "-cards -members -visibility",
+      "-cards -members -visibility -createdBy",
     );
 
     if (boards.length === 0) {
@@ -172,7 +172,7 @@ export const handleToggleFavorite = async (req: Request, res: Response) => {
   }
 
   try {
-    const board = await Board.findById(id);
+    const board = await Board.findById(id).select("-createdBy -members -cards -visibility");
 
     if (!board) {
       return res
