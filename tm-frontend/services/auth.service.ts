@@ -1,4 +1,4 @@
-import { userLoginApi, userLogoutApi, userRegistrationApi } from "@/helpers/auth.helper";
+import { handleGenerateAccessToken, userLoginApi, userLogoutApi, userRegistrationApi } from "@/helpers/auth.helper";
 import { handleApiError } from "@/helpers/handle-error";
 import { LoginInput } from "@/lib/schema/login.schema";
 import type { SignupInput } from "@/lib/schema/signup.schema";
@@ -29,5 +29,15 @@ export async function loginUser(data: LoginInput) {
     } catch (error: unknown){
         handleApiError(error);
         return null
+    }
+}
+
+export async function getAccessToken() {
+    try {
+        const data = await handleGenerateAccessToken();
+        return data;
+    } catch (error: unknown) {
+        handleApiError(error)
+        return null;
     }
 }

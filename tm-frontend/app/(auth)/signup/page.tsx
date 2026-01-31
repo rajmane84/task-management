@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeClosed, Loader2 } from "lucide-react";
@@ -11,7 +11,7 @@ import { TaskFlowLogo, AtlassianLogo } from "@/components/logo";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "@/store/user.store";
-import { registerUser } from "@/services/auth.service";
+import { getAccessToken, registerUser } from "@/services/auth.service";
 
 export default function SignupPage() {
   const [isPending, startTransition] = useTransition();
@@ -47,6 +47,17 @@ export default function SignupPage() {
     router.replace("/app");
   });
   };
+
+  useEffect(() => {
+      async function generateAccessToken() {
+        const data = await getAccessToken();
+        if(!data) return;
+        
+        router.replace("/app")
+      }
+  
+      generateAccessToken()
+    }, [])
 
   const inputBaseStyles =
     "w-full p-2 border outline-none text-neutral-800 focus:ring-2 focus:ring-blue-500 bg-neutral-100/50 transition-all duration-300 placeholder:text-gray-500 rounded-sm";

@@ -25,3 +25,8 @@ export async function userLoginApi(data:LoginInput) {
     const response = await axiosInstance.post("/auth/login", data);
     return response;
 }
+
+export async function handleGenerateAccessToken() {
+    const response = await axiosInstance.get("/auth/refresh-token", {withCredentials: true});
+    return response.data;
+}
