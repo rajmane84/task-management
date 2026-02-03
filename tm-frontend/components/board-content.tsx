@@ -1,109 +1,78 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { Card } from "@/store/board.store";
+import type { Card as CardData } from "@/store/board.store";
 import CreateCardModal from "./models/create-card";
 import CardDetailsModal from "./models/card-details-model";
-import { Clock, MoreVertical } from "lucide-react";
+import { Card } from "../components/card"; // Assuming you saved the first component as Card.tsx
 
 interface BoardContentProps {
   boardId: string;
-  initialCards: any[];
+  initialCards: CardData[];
 }
 
 export const BoardContent: React.FC<BoardContentProps> = ({
   boardId,
   initialCards,
 }) => {
-  const [cards, setCards] = useState<Card[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedCard, setSelectedCard] = useState<Card | null>(null);
+  const [cards, setCards] = useState<CardData[]>([]);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [selectedCard, setSelectedCard] = useState<CardData | null>(null);
 
   useEffect(() => {
     setCards(initialCards);
   }, [initialCards]);
 
+  // Handlers for Card actions
+  const handleEdit = (card: CardData) => {
+    console.log("Edit card:", card._id);
+    // Logic for opening an edit state or modal
+  };
+
+  const handleDuplicate = (card: CardData) => {
+    console.log("Duplicate card:", card._id);
+    // Logic for calling your API to duplicate
+  };
+
+  const handleDelete = (card: CardData) => {
+    if (confirm("Are you sure you want to delete this card?")) {
+      setCards((prev) => prev.filter((c) => c._id !== card._id));
+      // Logic for calling your API to delete
+    }
+  };
+
   return (
     <main className="w-full flex-1 p-4">
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-6">
-        {cards.map((card) => {
-          const isOverdue = card.dueDate && new Date(card.dueDate) < new Date();
-          return (
-            <button
-              onClick={() => setSelectedCard(card)}
-              className="group relative w-full rounded-lg bg-black/30 p-4 text-left text-white shadow-sm transition hover:bg-black/40 focus:ring-2 focus:ring-blue-500/50 focus:outline-none"
-            >
-              {/* 3-dot menu */}
-              <div
-                className="absolute top-2 right-2 z-10"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <button className="rounded-md p-1 text-white/60 hover:bg-white/10 hover:text-white">
-                  <MoreVertical size={16} />
-                </button>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6">
+        {cards.map((card) => (
+          <Card
+            key={card._id}
+            card={card}
+            onSelect={(c) => setSelectedCard(c)}
+            onEdit={handleEdit}
+            onDuplicate={handleDuplicate}
+            onDelete={handleDelete}
+          />
+        ))}
 
-                {/* Dropdown (example) */}
-                <div className="invisible absolute right-0 mt-1 w-36 rounded-md border border-white/10 bg-neutral-900 text-sm text-white shadow-lg group-focus-within:visible">
-                  <button className="block w-full px-3 py-2 text-left hover:bg-white/10">
-                    Edit
-                  </button>
-                  <button className="block w-full px-3 py-2 text-left hover:bg-white/10">
-                    Duplicate
-                  </button>
-                  <button className="block w-full px-3 py-2 text-left text-red-400 hover:bg-red-500/10">
-                    Delete
-                  </button>
-                </div>
-              </div>
-
-              {/* Title */}
-              <h2 className="pr-6 leading-tight font-semibold">{card.title}</h2>
-
-              {/* Description */}
-              {card.description && (
-                <p className="mt-1 line-clamp-2 text-sm text-white/60">
-                  {card.description}
-                </p>
-              )}
-
-              {/* Footer */}
-              <div className="mt-3 flex items-center justify-between">
-                {card.dueDate && (
-                  <div
-                    className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium ${
-                      isOverdue
-                        ? "bg-red-500/20 text-red-400"
-                        : "bg-amber-500/20 text-amber-400"
-                    } `}
-                  >
-                    <Clock size={12} />
-                    <span>{new Date(card.dueDate).toLocaleDateString()}</span>
-                  </div>
-                )}
-              </div>
-            </button>
-          );
-        })}
-
-        {/* Add Card */}
+        {/* Add Card Button */}
         <button
-          onClick={() => setIsModalOpen(true)}
-          className="flex h-12 items-center justify-center rounded-md bg-white/20 text-sm font-medium text-white transition hover:bg-white/20"
+          onClick={() => setIsCreateModalOpen(true)}
+          className="flex h-[100px] items-center justify-center rounded-lg border-2 border-dashed border-white/20 bg-transparent text-sm font-medium text-white/60 transition hover:border-white/40 hover:bg-white/5 hover:text-white"
         >
           + Add Card
         </button>
       </div>
 
-      {/* Create Card Modal */}
-      {isModalOpen && (
+      {/* Modals */}
+      {isCreateModalOpen && (
         <CreateCardModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
+          isOpen={isCreateModalOpen}
+          onClose={() => setIsCreateModalOpen(false)}
           boardId={boardId}
         />
       )}
 
-      {/* Card Details Modal */}
       {selectedCard && (
         <CardDetailsModal
           card={selectedCard}
