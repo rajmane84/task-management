@@ -7,7 +7,7 @@ import {
 } from "../zod-schemas/user.schema";
 import { formatZodError } from "../utils/format-error";
 import { Board } from "../models/board.model";
-import { COOKIE_OPTIONS } from "../constants";
+import { ACCESS_TOKEN_COOKIE_OPTIONS, REFRESH_TOKEN_COOKIE_OPTIONS } from "../constants";
 
 export const handleGetCurrentUser = async (req: Request, res: Response) => {
   try {
@@ -134,7 +134,7 @@ export const handleDeleteUser = async (req: Request, res: Response) => {
     const deletedBoards = await Board.deleteMany({ createdBy: user._id });
     await user.deleteOne();
 
-    res.clearCookie("accessToken").clearCookie("refreshToken", COOKIE_OPTIONS);
+    res.clearCookie("accessToken", ACCESS_TOKEN_COOKIE_OPTIONS).clearCookie("refreshToken", REFRESH_TOKEN_COOKIE_OPTIONS);
 
     res.status(200).json({
       success: true,

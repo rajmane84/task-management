@@ -7,6 +7,7 @@ const publicRoutes = ["/signin", "/signup", "/"];
 export default async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const token = req.cookies.get("accessToken")?.value;
+  console.log(req.cookies.get('accessToken'));
 
   const isProtectedRoute = protectedRoutes.some((route) =>
     pathname.startsWith(route),
