@@ -11,7 +11,7 @@ import {
   addMemberToBoard,
   removeMemberFromBoard,
   handleGetBoardDetails,
-  handleUpdateRole
+  handleUpdateRole,
 } from "../../controllers/board.controller";
 import { validateUser } from "../../middlewares/auth.middleware";
 
@@ -35,6 +35,5 @@ boardRouter.patch("/:id/member/:userId", handleUpdateRole);
 boardRouter.get("/:id", handleGetBoardDetails);
 
 boardRouter.delete("/delete/:id", handleDeleteBoard);
-
 
 export default boardRouter;

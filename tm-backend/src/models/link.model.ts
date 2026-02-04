@@ -1,13 +1,13 @@
-import mongoose, {Schema, Document} from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 
 interface IShareableLink extends Document {
   token: string;
   targetId: mongoose.Types.ObjectId;
-  role: 'editor' | 'viewer';
+  role: "editor" | "viewer";
   expiresAt?: Date | null;
   maxUses?: number | null;
   usedCount: number;
-  status: 'active' | 'expired' | 'revoked';
+  status: "active" | "expired" | "revoked";
   createdBy: mongoose.Types.ObjectId;
   isValid: boolean;
 }
@@ -22,12 +22,12 @@ const ShareableLinkSchema = new Schema<IShareableLink>(
     targetId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: "Board"
+      ref: "Board",
     },
     role: {
       type: String,
       enum: ["editor", "viewer"],
-      default: 'editor',
+      default: "editor",
     },
     expiresAt: {
       type: Date, // optional expiration
@@ -43,26 +43,30 @@ const ShareableLinkSchema = new Schema<IShareableLink>(
     },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
+      ref: "User",
       required: true,
     },
     status: {
       type: String,
-      enum: ['active', 'expired', 'revoked'],
-      default: 'active',
+      enum: ["active", "expired", "revoked"],
+      default: "active",
     },
   },
-  { timestamps: true } // automatically adds createdAt and updatedAt
+  { timestamps: true }, // automatically adds createdAt and updatedAt
 );
 
 // add a virtual field to check if link is valid
-ShareableLinkSchema.virtual('isValid').get(function () {
+ShareableLinkSchema.virtual("isValid").get(function () {
   const now = new Date();
-  if (this.status !== 'active') return false;
+  if (this.status !== "active") return false;
   if (this.expiresAt && now > this.expiresAt) return false;
-  if (this.maxUses && this.maxUses !== null && this.usedCount >= this.maxUses) return false;
+  if (this.maxUses && this.maxUses !== null && this.usedCount >= this.maxUses)
+    return false;
   return true;
 });
 
 // Export model
-export const ShareableLink = mongoose.model<IShareableLink>('ShareableLink', ShareableLinkSchema);
+export const ShareableLink = mongoose.model<IShareableLink>(
+  "ShareableLink",
+  ShareableLinkSchema,
+);

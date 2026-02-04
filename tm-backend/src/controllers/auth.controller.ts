@@ -9,7 +9,11 @@ import { formatZodError } from "../utils/format-error";
 import { User } from "../models/user.model";
 import bcrypt from "bcryptjs";
 import jwt, { type JwtPayload } from "jsonwebtoken";
-import { COOKIE_OPTIONS, NODE_ENV } from "../constants";
+import {
+  NODE_ENV,
+  REFRESH_TOKEN_COOKIE_OPTIONS,
+  ACCESS_TOKEN_COOKIE_OPTIONS,
+} from "../constants";
 import { generateUsername } from "../utils/generate-username";
 import crypto from "crypto";
 import { sendResetPasswordEmail } from "../utils/send-email";
@@ -51,8 +55,8 @@ export const handleUserLogin = async (req: Request, res: Response) => {
 
     return res
       .status(200)
-      .cookie("refreshToken", refreshToken, COOKIE_OPTIONS)
-      .cookie("accessToken", accessToken)
+      .cookie("refreshToken", refreshToken, REFRESH_TOKEN_COOKIE_OPTIONS)
+      .cookie("accessToken", accessToken, ACCESS_TOKEN_COOKIE_OPTIONS)
       .json({
         success: true,
         message: "Login successful",
@@ -62,7 +66,7 @@ export const handleUserLogin = async (req: Request, res: Response) => {
             name: user.name,
             username: user.username,
             email: user.email,
-            avatar: user.avatar
+            avatar: user.avatar,
           },
         },
       });
@@ -115,8 +119,8 @@ export const handleUserSignup = async (req: Request, res: Response) => {
 
     return res
       .status(201)
-      .cookie("refreshToken", refreshToken, COOKIE_OPTIONS)
-      .cookie("accessToken", accessToken)
+      .cookie("refreshToken", refreshToken, REFRESH_TOKEN_COOKIE_OPTIONS)
+      .cookie("accessToken", accessToken, ACCESS_TOKEN_COOKIE_OPTIONS)
       .json({
         success: true,
         message: "User created successfully",
@@ -126,7 +130,7 @@ export const handleUserSignup = async (req: Request, res: Response) => {
             username: user.username,
             email: user.email,
             name: user.name,
-            avatar: user.avatar
+            avatar: user.avatar,
           },
         },
       });
@@ -165,10 +169,13 @@ export const refreshAccessToken = async (req: Request, res: Response) => {
 
     const accessToken = user.generateAccessToken();
 
-    return res.status(200).cookie("accessToken", accessToken).json({
-      success: true,
-      message: "Access token refreshed successfully",
-    });
+    return res
+      .status(200)
+      .cookie("accessToken", accessToken, ACCESS_TOKEN_COOKIE_OPTIONS)
+      .json({
+        success: true,
+        message: "Access token refreshed successfully",
+      });
   } catch (error) {
     console.error("Refresh Token Error:", error);
 
@@ -190,7 +197,9 @@ export const handleUserLogout = async (req: Request, res: Response) => {
       { new: true },
     );
 
-    res.clearCookie("refreshToken", COOKIE_OPTIONS).clearCookie("accessToken");
+    res
+      .clearCookie("refreshToken", REFRESH_TOKEN_COOKIE_OPTIONS)
+      .clearCookie("accessToken", ACCESS_TOKEN_COOKIE_OPTIONS);
 
     return res
       .status(200)
@@ -254,12 +263,10 @@ export const handleForgotPassword = async (req: Request, res: Response) => {
     });
   } catch (error: any) {
     console.error("Forgot password error:", error);
-    return res
-      .status(500)
-      .json({
-        success: false,
-        message: error.message || "Something went wrong",
-      });
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Something went wrong",
+    });
   }
 };
 

@@ -1,9 +1,18 @@
-export const COOKIE_OPTIONS = {
+import type { CookieOptions } from "express";
+
+export const REFRESH_TOKEN_COOKIE_OPTIONS: CookieOptions = {
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
-  sameSite: "strict" as const,
+  sameSite: "none",
   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 };
+
+export const ACCESS_TOKEN_COOKIE_OPTIONS: CookieOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "none",
+  maxAge: 24 * 60 * 60 * 1000, // 24 hours
+} as const;
 
 export const NODE_ENV = process.env.NODE_ENV;
 

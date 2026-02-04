@@ -172,7 +172,9 @@ export const handleToggleFavorite = async (req: Request, res: Response) => {
   }
 
   try {
-    const board = await Board.findById(id).select("-createdBy -members -cards -visibility");
+    const board = await Board.findById(id).select(
+      "-createdBy -members -cards -visibility",
+    );
 
     if (!board) {
       return res
@@ -289,11 +291,12 @@ export const handleChangeVisibility = async (req: Request, res: Response) => {
       });
     }
 
-    const isAdmin = board.createdBy.toString() === userId.toString() ||
-    board.members.some(
-      (member) =>
-        member.user.toString() === userId && member.role === "admin"
-    );
+    const isAdmin =
+      board.createdBy.toString() === userId.toString() ||
+      board.members.some(
+        (member) =>
+          member.user.toString() === userId && member.role === "admin",
+      );
 
     if (!isAdmin) {
       return res.status(403).json({

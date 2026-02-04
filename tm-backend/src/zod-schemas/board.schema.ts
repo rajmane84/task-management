@@ -2,10 +2,12 @@ import z from "zod";
 
 export const createBoardSchema = z.strictObject({
   title: z.string().min(1, "Title is required"),
-  background: z.strictObject({
-    type: z.enum(["color", "image"]).optional(),
-    value: z.string().optional()
-  }).optional(),
+  background: z
+    .strictObject({
+      type: z.enum(["color", "image"]).optional(),
+      value: z.string().optional(),
+    })
+    .optional(),
 });
 
 export const deleteBoardSchema = z.strictObject({

@@ -3,17 +3,17 @@ import mongoose, { Schema, Document } from "mongoose";
 export interface IBoard extends Document {
   title: string;
   background?: {
-    type: String,
-    value: String
+    type: string;
+    value: string;
   };
   createdBy: mongoose.Types.ObjectId;
   members: {
     user: mongoose.Types.ObjectId;
-    role: String
+    role: string;
   }[];
   favorite: boolean;
   cards: mongoose.Types.ObjectId[];
-  visibility: String;
+  visibility: string;
 }
 
 const boardSchema = new Schema<IBoard>(
@@ -29,12 +29,12 @@ const boardSchema = new Schema<IBoard>(
       type: {
         type: String,
         enum: ["image", "color"],
-        default: "color"
+        default: "color",
       },
       value: {
         type: String,
-        default: "#525252" // neutral-600 color
-      }
+        default: "#525252", // neutral-600 color
+      },
     },
     createdBy: {
       type: Schema.Types.ObjectId,
@@ -49,14 +49,14 @@ const boardSchema = new Schema<IBoard>(
       {
         user: {
           type: Schema.Types.ObjectId,
-          ref: 'User'
+          ref: "User",
         },
         role: {
           type: String,
           enum: ["admin", "editor", "viewer"], // For now we'll keep only one admin ie the creator and others will be editors or viewers
-          default: "editor"
-        }
-      }
+          default: "editor",
+        },
+      },
     ],
     cards: {
       type: [Schema.Types.ObjectId],
@@ -66,8 +66,8 @@ const boardSchema = new Schema<IBoard>(
     visibility: {
       type: String,
       enum: ["public", "private"],
-      default: "private"
-    }
+      default: "private",
+    },
   },
   { timestamps: true },
 );
