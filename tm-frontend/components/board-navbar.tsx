@@ -1,6 +1,7 @@
 import { Share2 } from "lucide-react";
 import { TaskFlowLogo } from "./logo";
 import Link from "next/link";
+import ShareButton from "./share-link-btn";
 
 const BoardNavbar = ({ title = "Fallback title" }: { title?: string }) => {
   return (
@@ -20,10 +21,7 @@ const BoardNavbar = ({ title = "Fallback title" }: { title?: string }) => {
       </h1>
 
       <div className="flex items-center gap-2">
-        <button className="flex items-center gap-1 rounded-md bg-white px-3 py-1.5 text-sm font-semibold text-neutral-900 transition hover:bg-white/90">
-          <Share2 size={16} />
-          <span className="hidden sm:inline">Share</span>
-        </button>
+        <ShareButton />
       </div>
     </nav>
   );
