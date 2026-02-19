@@ -19,3 +19,5 @@ export const ACCESS_TOKEN_COOKIE_OPTIONS: CookieOptions = {
 export const NODE_ENV = process.env.NODE_ENV;
 
 export const FILE_SIZE = 1024 * 1024 * 5;
+
+export const isProduction = NODE_ENV === "production";
