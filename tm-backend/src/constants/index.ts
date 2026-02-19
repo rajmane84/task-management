@@ -1,16 +1,18 @@
 import type { CookieOptions } from "express";
 
-export const REFRESH_TOKEN_COOKIE_OPTIONS: CookieOptions = {
+const BASE_COOKIE_OPTIONS: CookieOptions = {
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
-  sameSite: "none",
+  sameSite: "lax",
+}
+
+export const REFRESH_TOKEN_COOKIE_OPTIONS: CookieOptions = {
+  ...BASE_COOKIE_OPTIONS,
   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 } as const;
 
 export const ACCESS_TOKEN_COOKIE_OPTIONS: CookieOptions = {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: "none",
+  ...BASE_COOKIE_OPTIONS,
   maxAge: 24 * 60 * 60 * 1000, // 24 hours
 } as const;
 
