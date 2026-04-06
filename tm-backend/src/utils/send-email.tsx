@@ -1,5 +1,4 @@
 import nodemailer from "nodemailer";
-import sgMail from "@sendgrid/mail";
 import { NODE_ENV } from "../constants";
 
 const isProduction = NODE_ENV === "production";
@@ -14,10 +13,6 @@ const devTransporter = nodemailer.createTransport({
   },
 });
 
-if (isProduction) {
-  sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
-}
-
 export const sendResetPasswordEmail = async (email: string, url: string) => {
   const subject = "Password Reset Request";
   const htmlContent = `
@@ -30,14 +25,19 @@ export const sendResetPasswordEmail = async (email: string, url: string) => {
 
   try {
     if (isProduction) {
-      const msg = {
-        to: email,
-        from: process.env.SENDGRID_SENDER_EMAIL!,
+      const { Resend } = await import("resend");
+      const resend = new Resend(process.env.RESEND_API_KEY);
+
+      const { data, error } = await resend.emails.send({
+        from: process.env.RESEND_SENDER_EMAIL!,
+        to: [email],
         subject,
         html: htmlContent,
-        text: `Reset your password using this link: ${url}`,
-      };
-      await sgMail.send(msg);
+      });
+
+      if (error) throw error;
+      console.log(`Email sent via Resend. ID: ${data?.id}`);
+
       console.log(`Password reset email sent to ${email} via SendGrid`);
     } else {
       await devTransporter.sendMail({

@@ -14,8 +14,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Task Manager",
-  description: "Track and manage your tasks efficiently.",
+  title: {
+    default: "Task Manager | Stay Organized",
+    template: "%s | Task Manager",
+  },
+  description:
+    "Boost your productivity with our streamlined Task Manager. Organise, prioritize, and track your daily goals in one place.",
+  keywords: ["productivity", "task management", "todo list", "workflow"],
 };
 
 export default function RootLayout({
